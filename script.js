@@ -87,7 +87,7 @@ function updateUpgradesUI() {
     else if(i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
     else if(i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
 
-    btn.textContent = label;
+    btn.textContent=label;
     btn.addEventListener('click', () => {
       if(bananas >= upgradeCosts[i]){
         bananas -= upgradeCosts[i];
@@ -105,7 +105,6 @@ function saveAndUpdate(){
   updateUI();
 }
 
-// DOM elements
 const modal = document.getElementById("usernameModal");
 const usernameInput = document.getElementById("usernameInput");
 const submitBtn = document.getElementById("usernameSubmit");
@@ -120,19 +119,16 @@ const rebirthBtn = document.getElementById("rebirthBtn");
 const restoreBtn = document.getElementById("restoreBtn");
 const codesBtn = document.getElementById("codesBtn");
 
-// Show username
 function showUsername(username){
   usernameText.textContent = username;
   usernameDisplay.style.display = "flex";
   modal.style.display = "none";
 }
 
-// Save username
 function saveUsername(username){
   localStorage.setItem("username", username);
 }
 
-// Admin panel banana adding
 addBananasBtn.addEventListener("click", () => {
   const addAmount = parseInt(bananaAddInput.value);
   if(isNaN(addAmount) || addAmount < 1){
@@ -144,12 +140,10 @@ addBananasBtn.addEventListener("click", () => {
   bananaAddInput.value = "";
 });
 
-// Trade button stub
 tradeButton.addEventListener("click", () => {
   alert("Trade UI coming soon! (Local network trading not yet implemented)");
 });
 
-// Username modal submit
 submitBtn.addEventListener("click", () => {
   const username = usernameInput.value.trim();
   if(username.length > 0){
@@ -165,21 +159,17 @@ usernameInput.addEventListener("keyup", (e) => {
   }
 });
 
-// Admin panel toggle with password prompt
+// Admin panel toggle button with password "admin123"
 adminToggleBtn.addEventListener("click", () => {
   const pass = prompt("Enter admin password:");
   if(pass === "admin123"){
-    if(adminPanel.style.display === "block"){
-      adminPanel.style.display = "none";
-    } else {
-      adminPanel.style.display = "block";
-    }
+    adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
   } else {
     alert("Incorrect password.");
   }
 });
 
-// Rebirth button logic
+// Rebirth button resets bananas and upgrades but increases multiplier by 0.5x
 rebirthBtn.addEventListener("click", () => {
   if(confirm("Rebirth resets bananas and upgrades but increases multiplier by 0.5x. Continue?")){
     bananas = 0;
@@ -191,11 +181,11 @@ rebirthBtn.addEventListener("click", () => {
     ];
     rebirthMultiplier += 0.5;
     saveAndUpdate();
-    alert(`Rebirth complete! Multiplier is now x${rebirthMultiplier.toFixed(2)}`);
+    alert(`Rebirth complete! Multiplier now x${rebirthMultiplier.toFixed(2)}`);
   }
 });
 
-// Restore button logic prompts amount and password "hello"
+// Restore button prompts amount + password "hello"
 restoreBtn.addEventListener("click", () => {
   const amountStr = prompt("Enter amount of bananas to restore:");
   if(!amountStr) return;
@@ -204,8 +194,8 @@ restoreBtn.addEventListener("click", () => {
     alert("Invalid amount.");
     return;
   }
-  const pass = prompt("Enter password:");
-  if(pass !== "hello"){
+  const password = prompt("Enter password:");
+  if(password !== "hello"){
     alert("Incorrect password.");
     return;
   }
@@ -214,11 +204,11 @@ restoreBtn.addEventListener("click", () => {
   alert(`Restored ${amount.toLocaleString()} bananas.`);
 });
 
-// Codes redeem button logic
+// Codes redeem logic, "SORRY" grants 1 million bananas once
 codesBtn.addEventListener("click", () => {
-  const codeInput = prompt("Enter your code:");
-  if(!codeInput) return;
-  const code = codeInput.trim().toUpperCase();
+  const inputCode = prompt("Enter your code:");
+  if(!inputCode) return;
+  const code = inputCode.trim().toUpperCase();
   if(codesUsed.has(code)){
     alert("You already used this code.");
     return;
@@ -233,7 +223,6 @@ codesBtn.addEventListener("click", () => {
   }
 });
 
-// Load on page start
 window.onload = () => {
   loadData();
   updateUI();
@@ -246,19 +235,17 @@ window.onload = () => {
     usernameInput.focus();
   }
 
-  const loadingScreen = document.getElementById("loadingScreen");
-  if(loadingScreen){
-    loadingScreen.style.display = "none";
-  }
+  const loadingScreen = document.getElementById('loadingScreen');
+  if(loadingScreen) loadingScreen.style.display = 'none';
 };
 
-// Click banana button - add bananas with multiplier
+// Click banana button
 document.getElementById('clickBananaBtn').addEventListener('click', () => {
   bananas += bananasPerClick * rebirthMultiplier;
   saveAndUpdate();
 });
 
-// Autoclick bananas per second loop including multiplier
+// Auto bananas gain with multiplier
 setInterval(() => {
   if(autoClickRate > 0){
     bananas += autoClickRate * rebirthMultiplier;
