@@ -136,3 +136,4 @@ window.onload = () => {
     }
   }, 1000);
 };
+document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
