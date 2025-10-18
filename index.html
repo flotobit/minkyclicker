@@ -1,225 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MinkyClicker Enhanced</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin:0;
-      background:#fafafa;
-      color:#333;
-    }
-    .header {
-      background:#444;
-      color:white;
-      padding:10px 20px;
-      display:flex;
-      gap: 20px;
-      align-items:center;
-    }
-    .banana-count {
-      font-weight:bold;
-      font-size:1.2rem;
-    }
-    .per-second {
-      font-size:1rem;
-    }
-    .main-area {
-      text-align:center;
-      padding:20px;
-    }
-    .main-area img {
-      cursor:pointer;
-      width:150px;
-      user-select:none;
-    }
-    .game-container {
-      display:flex;
-      gap:20px;
-      padding:10px 20px;
-    }
-    .left-sidebar, .left-panel, .right-panel {
-      background:white;
-      padding:15px;
-      border-radius:10px;
-    }
-    .left-sidebar {
-      width: 140px;
-      display:flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 0.9rem;
-      user-select:none;
-    }
-    .left-sidebar button {
-      background:#3a86ff;
-      color:white;
-      border:none;
-      border-radius:6px;
-      padding:8px 0;
-      cursor:pointer;
-      font-weight:bold;
-    }
-    .left-sidebar button:hover {
-      background:#265dcc;
-    }
-    .left-panel, .right-panel {
-      flex:1;
-    }
-    .click-power {
-      font-weight: bold;
-      margin-bottom:10px;
-    }
-    .upgrades-list {
-      display:flex;
-      flex-direction: column;
-      gap:10px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .upgrade-btn {
-      background:#eee;
-      border:1px solid #bbb;
-      padding:8px 10px;
-      border-radius:6px;
-      cursor:pointer;
-      display:flex;
-      justify-content: space-between;
-      font-size: 1rem;
-      user-select:none;
-    }
-    .upgrade-btn:disabled {
-      cursor:not-allowed;
-      opacity:0.5;
-    }
-    /* Username modal */
-    #usernameModal {
-      display:block;
-      position: fixed;
-      z-index: 10000;
-      left:0;top:0;width:100%;height:100%;
-      background: rgba(0,0,0,0.4);
-      overflow:auto;
-    }
-    #usernameModalContent {
-      background:#fefefe;
-      margin:15% auto;
-      padding:20px;
-      width:320px;
-      border-radius:10px;
-      border:1px solid #888;
-      text-align:center;
-    }
-    #usernameInput {
-      width: 90%;
-      padding: 10px;
-      font-size: 1rem;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      border: 1px solid #aaa;
-    }
-    #usernameSubmit {
-      width: 100%;
-      padding: 10px 0;
-      font-size: 1rem;
-      background: #4CAF50;
-      border: none;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-    #usernameSubmit:hover { background: #45a049; }
-    /* Username display & trade */
-    #usernameDisplay {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: #222;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      display: none;
-      align-items: center;
-      gap: 10px;
-      z-index: 11000;
-    }
-    #tradeButton {
-      background: #2196F3;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-    #tradeButton:hover {
-      background: #0b7dda;
-    }
-    /* Admin Panel */
-    #adminPanel {
-      position: fixed;
-      top: 50px;
-      right: 20px;
-      width: 280px;
-      background: #333;
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      font-family: Arial, sans-serif;
-      box-shadow: 0 0 10px rgba(0,0,0,0.8);
-      z-index: 11000;
-      display: none;
-    }
-    #adminPanel h3 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    #bananaAddInput {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border: none;
-      font-size: 1rem;
-      color: #222;
-    }
-    #addBananasBtn {
-      width: 100%;
-      padding: 10px 0;
-      background: #27ae60;
-      border: none;
-      border-radius: 4px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #addBananasBtn:hover {
-      background: #1e8449;
-    }
-    /* Admin panel toggle button */
-    #adminToggleBtn {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 12000;
-      background: #d35400;
-      border: none;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    #adminToggleBtn:hover {
-      background: #b03a00;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MinkyClicker Enhanced</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#fafafa;
+    color:#333;
+  }
+  .header {
+    background:#444;
+    color:white;
+    padding:10px 20px;
+    display:flex;
+    gap: 20px;
+    align-items:center;
+  }
+  .banana-count {
+    font-weight:bold;
+    font-size:1.2rem;
+  }
+  .per-second {
+    font-size:1rem;
+  }
+  .game-container {
+    display:flex;
+    gap:20px;
+    padding:10px 20px;
+  }
+  .left-sidebar, .right-panel {
+    background:white;
+    padding:15px;
+    border-radius:10px;
+  }
+  .left-sidebar {
+    width: 140px;
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+    user-select:none;
+  }
+  .left-sidebar button, .click-btn, .upgrade-btn, #adminToggleBtn {
+    background:#3a86ff;
+    color:white;
+    border:none;
+    border-radius:6px;
+    padding:12px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size: 1rem;
+  }
+  .left-sidebar button:hover, .click-btn:hover, .upgrade-btn:hover, #adminToggleBtn:hover {
+    background:#265dcc;
+  }
+  .right-panel {
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .click-power {
+    font-weight: bold;
+  }
+  .upgrade-btn {
+    justify-content: space-between;
+    user-select:none;
+  }
+  .upgrade-btn:disabled {
+    cursor:not-allowed;
+    opacity:0.5;
+  }
+  #loadingScreen {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:#222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    z-index: 20000;
+  }
+  #usernameModal {
+    display:none;
+    position: fixed;
+    z-index: 10000;
+    left:0;top:0;width:100%;height:100%;
+    background: rgba(0,0,0,0.4);
+    overflow:auto;
+  }
+  #usernameModalContent {
+    background:#fefefe;
+    margin:15% auto;
+    padding:20px;
+    width:320px;
+    border-radius:10px;
+    border:1px solid #888;
+    text-align:center;
+  }
+  #usernameInput {
+    width: 90%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+  }
+  #usernameSubmit {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1rem;
+    background: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  #usernameSubmit:hover { background: #45a049; }
+  #usernameDisplay {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: #222;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 11000;
+  }
+  #tradeButton {
+    background: #2196F3;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  #tradeButton:hover { background: #0b7dda; }
+  #adminPanel {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    width: 280px;
+    background: #333;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    z-index: 11000;
+    display: none;
+  }
+  #adminPanel h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  #bananaAddInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: none;
+    font-size: 1rem;
+    color: #222;
+  }
+  #addBananasBtn {
+    width: 100%;
+    padding: 10px 0;
+    background: #27ae60;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #addBananasBtn:hover {
+    background: #1e8449;
+  }
+  #adminToggleBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 12000;
+    background: #d35400;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #adminToggleBtn:hover {
+    background: #b03a00;
+  }
+</style>
 </head>
 <body>
+
+  <div id="loadingScreen">Loading...</div>
 
   <div class="header">
     <div id="bananaCount" class="banana-count">Bananas: 0</div>
@@ -233,18 +222,11 @@
       <button id="codesBtn">Codes</button>
     </div>
 
-    <div class="left-panel">
-      <img id="capybaraImage" src="image.jpg" alt="Capybara" width="100%" />
-    </div>
-
     <div class="right-panel">
+      <button class="click-btn" id="clickBananaBtn">Click for Banana 🍌</button>
       <div class="click-power">CLICK POWER<br><span id="clickPower">+1</span></div>
       <div class="upgrades-list" id="upgradesList"></div>
     </div>
-  </div>
-
-  <div class="main-area">
-    <img id="monkeyImage" src="Adobe-Express-file.jpg" alt="Monkey" />
   </div>
 
   <!-- Username Modal -->
@@ -272,261 +254,6 @@
     <button id="addBananasBtn">Add Bananas</button>
   </div>
 
-<script>
-  // Game state variables
-  let bananas = 0;
-  let bananasPerClick = 1;
-  let autoClickRate = 0;
-  let rebirthMultiplier = 1;
-
-  let upgradeCosts = [
-    50, 500, 750, 1500, 5000, 20000, 100000, 250000, 500000, 750000,
-    900000, 1000000, 2000000, 3000000, 4000000, 5000000
-  ];
-  let upgradeEffects = [
-    () => bananasPerClick += 1,
-    () => autoClickRate += 5,
-    () => autoClickRate += 5,
-    () => autoClickRate += 10,
-    () => autoClickRate += 25,
-    () => bananasPerClick = 20,
-    () => autoClickRate += 100,
-    () => autoClickRate += 200,
-    () => bananasPerClick += 50,
-    () => autoClickRate += 500,
-    () => bananasPerClick += 100,
-    () => autoClickRate += 1000,
-    () => bananasPerClick += 300,
-    () => autoClickRate += 2000,
-    () => bananasPerClick += 500,
-    () => autoClickRate += 5000
-  ];
-
-  let codesUsed = new Set();
-
-  // Load/save data to localStorage
-  function loadData() {
-    bananas = Number(localStorage.getItem('bananas')) || 0;
-    bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
-    autoClickRate = Number(localStorage.getItem('autoClickRate')) || 0;
-    rebirthMultiplier = Number(localStorage.getItem('rebirthMultiplier')) || 1;
-    const savedCosts = JSON.parse(localStorage.getItem('upgradeCosts'));
-    if(Array.isArray(savedCosts) && savedCosts.length === upgradeCosts.length){
-      upgradeCosts = savedCosts.map(Number);
-    }
-    const savedCodesUsed = localStorage.getItem("codesUsed");
-    if(savedCodesUsed){
-      codesUsed = new Set(JSON.parse(savedCodesUsed));
-    }
-  }
-
-  function saveData() {
-    localStorage.setItem('bananas', bananas);
-    localStorage.setItem('bananasPerClick', bananasPerClick);
-    localStorage.setItem('autoClickRate', autoClickRate);
-    localStorage.setItem('upgradeCosts', JSON.stringify(upgradeCosts));
-    localStorage.setItem('codesUsed', JSON.stringify(Array.from(codesUsed)));
-    localStorage.setItem('rebirthMultiplier', rebirthMultiplier);
-  }
-
-  function updateUI() {
-    document.getElementById('bananaCount').textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
-    document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
-    document.querySelector('.per-second').textContent = `${Math.floor(autoClickRate * rebirthMultiplier).toLocaleString()} Bananas per Second (x${rebirthMultiplier.toFixed(2)})`;
-    document.getElementById('rebirthBtn').textContent = `Rebirth (x${(rebirthMultiplier + 0.5).toFixed(2)})`;
-    updateUpgradesUI();
-  }
-
-  function updateUpgradesUI() {
-    const upgradesList = document.getElementById('upgradesList');
-    upgradesList.innerHTML = '';
-    for(let i = 0; i < upgradeCosts.length; i++){
-      const btn = document.createElement('button');
-      btn.className = 'upgrade-btn';
-      btn.disabled = bananas < upgradeCosts[i];
-      let label = '';
-      if (i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      else if (i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-
-      btn.textContent = label;
-
-      btn.addEventListener('click', () => {
-        if (bananas >= upgradeCosts[i]) {
-          bananas -= upgradeCosts[i];
-          upgradeEffects[i]();
-          upgradeCosts[i] = Math.floor(upgradeCosts[i] * 1.5);
-          saveAndUpdate();
-        }
-      });
-
-      upgradesList.appendChild(btn);
-    }
-  }
-
-  function saveAndUpdate() {
-    saveData();
-    updateUI();
-  }
-
-  // Username and UI refs
-  const modal = document.getElementById("usernameModal");
-  const usernameInput = document.getElementById("usernameInput");
-  const submitBtn = document.getElementById("usernameSubmit");
-  const usernameDisplay = document.getElementById("usernameDisplay");
-  const usernameText = document.getElementById("usernameText");
-  const tradeButton = document.getElementById("tradeButton");
-  const adminPanel = document.getElementById("adminPanel");
-  const bananaAddInput = document.getElementById("bananaAddInput");
-  const addBananasBtn = document.getElementById("addBananasBtn");
-  const adminToggleBtn = document.getElementById("adminToggleBtn");
-  const rebirthBtn = document.getElementById("rebirthBtn");
-  const restoreBtn = document.getElementById("restoreBtn");
-  const codesBtn = document.getElementById("codesBtn");
-
-  function showUsername(username) {
-    usernameText.textContent = username;
-    usernameDisplay.style.display = "flex";
-    modal.style.display = "none";
-  }
-
-  function saveUsername(username) {
-    localStorage.setItem("username", username);
-  }
-
-  addBananasBtn.addEventListener("click", () => {
-    const addAmount = parseInt(bananaAddInput.value);
-    if (isNaN(addAmount) || addAmount < 1) {
-      alert("Please enter a valid positive number of bananas.");
-      return;
-    }
-    bananas += addAmount;
-    saveAndUpdate();
-    bananaAddInput.value = "";
-  });
-
-  tradeButton.addEventListener("click", () => {
-    alert("Trade UI coming soon! (Local network trading not yet implemented)");
-  });
-
-  submitBtn.addEventListener("click", () => {
-    const username = usernameInput.value.trim();
-    if (username.length > 0) {
-      saveUsername(username);
-      showUsername(username);
-    } else {
-      alert("Please enter a username.");
-    }
-  });
-
-  usernameInput.addEventListener("keyup", (event) => {
-    if (event.key === "Enter") {
-      submitBtn.click();
-    }
-  });
-
-  // Admin panel toggle via password prompt
-  adminToggleBtn.addEventListener("click", () => {
-    const pass = prompt("Enter admin password:");
-    if (pass === "admin123") {
-      adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
-    } else {
-      alert("Incorrect password.");
-    }
-  });
-
-  // Rebirth button logic
-  rebirthBtn.addEventListener("click", () => {
-    if (confirm("Rebirth will reset bananas and upgrades but increase multiplier by 0.5x. Continue?")) {
-      bananas = 0;
-      bananasPerClick = 1;
-      autoClickRate = 0;
-      upgradeCosts = [
-        50, 500, 750, 1500, 5000, 20000, 100000, 250000, 500000, 750000,
-        900000, 1000000, 2000000, 3000000, 4000000, 5000000
-      ];
-      rebirthMultiplier += 0.5;
-      saveAndUpdate();
-      alert(`Rebirth successful! New multiplier: x${rebirthMultiplier.toFixed(2)}`);
-    }
-  });
-
-  // Restore button handler - prompts for bananas amount and password 'hello'
-  restoreBtn.addEventListener("click", () => {
-    const amountStr = prompt("Enter amount of bananas to restore:");
-    if (!amountStr) return;
-    const amount = parseInt(amountStr);
-    if (isNaN(amount) || amount < 1) {
-      alert("Invalid amount.");
-      return;
-    }
-    const pass = prompt("Enter password to confirm:");
-    if (pass !== "hello") {
-      alert("Incorrect password.");
-      return;
-    }
-    bananas += amount;
-    saveAndUpdate();
-    alert(`Restored ${amount.toLocaleString()} bananas.`);
-  });
-
-  // Codes button and simple code redeem logic with 'SORRY' for 1,000,000 bananas once
-  codesBtn.addEventListener("click", () => {
-    const inputCode = prompt("Enter your code:");
-    if (!inputCode) return;
-    const code = inputCode.trim().toUpperCase();
-    if (codesUsed.has(code)) {
-      alert("Code already used.");
-      return;
-    }
-    if (code === "SORRY") {
-      bananas += 1000000;
-      codesUsed.add(code);
-      alert("Code accepted! Added 1,000,000 bananas.");
-      saveAndUpdate();
-    } else {
-      alert("Invalid code.");
-    }
-  });
-
-  window.onload = () => {
-    loadData();
-    updateUI();
-
-    const savedUsername = localStorage.getItem("username");
-    if (savedUsername && savedUsername.trim().length > 0) {
-      showUsername(savedUsername);
-    } else {
-      modal.style.display = "block";
-      usernameInput.focus();
-    }
-
-    document.getElementById('monkeyImage').addEventListener('click', () => {
-      bananas += bananasPerClick * rebirthMultiplier;
-      saveAndUpdate();
-    });
-  };
-
-  // Auto banana gain loop with multiplier
-  setInterval(() => {
-    if (autoClickRate > 0) {
-      bananas += autoClickRate * rebirthMultiplier;
-      saveAndUpdate();
-    }
-  }, 1000);
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
