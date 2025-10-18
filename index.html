@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Minky Clicker</title>
+  <title>MinkyClicker Enhanced</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     /* Modal overlay styles */
     #usernameModal {
@@ -77,11 +78,94 @@
     #tradeButton:hover {
       background-color: #0b7dda;
     }
+
+    /* Admin Panel overlay styles */
+    #adminPanel {
+      position: fixed;
+      top: 50px;
+      right: 20px;
+      width: 280px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+      z-index: 1100;
+      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+      display: none;
+    }
+    #adminPanel h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #bananaAddInput {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    #addBananasBtn {
+      width: 100%;
+      padding: 8px;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #addBananasBtn:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
+  <div class="header">
+    <div id="bananaCount" class="banana-count">Bananas: 0</div>
+    <div class="per-second">00 Capybaras per Second</div>
+  </div>
 
-  <!-- Your existing game content goes here -->
+  <div class="main-area">
+    <img id="monkeyImage" src="Adobe-Express-file.jpg" alt="Monkey" class="monkey-img" />
+  </div>
+
+  <div class="game-container">
+    <div class="left-panel">
+      <img id="capybaraImage" src="image.jpg" alt="Capybara" class="capybara-figure" />
+    </div>
+    <div class="right-panel">
+      <div class="click-power">CLICK POWER<br><span id="clickPower">+01</span></div>
+      <div class="upgrades-list" id="upgradesList">
+        <button class="upgrade-btn disabled">
+          <div class="icon-placeholder"></div>
+          <div class="upgrade-info">
+            <div class="name">???</div>
+            <div class="cost"><img src="coin-icon.png" alt="coin" class="coin-icon" />24</div>
+          </div>
+        </button>
+      </div>
+      <div class="ascend-panel">
+        <div class="current-multiplier">Current Multiplier: 1x</div>
+        <button class="ascend-btn">Ascend for +0x</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="click-power">CLICK POWER<br><span id="clickPowerSidebar">+1</span></div>
+    <div class="upgrades-list">
+      <button id="upgrade1" class="upgrade-btn">🍌 +1/click<br>Cost: <span id="cost1">50</span></button>
+      <button id="upgrade2" class="upgrade-btn">💨 +5/sec<br>Cost: <span id="cost2">500</span></button>
+      <button id="upgrade3" class="upgrade-btn">💨 +5/sec<br>Cost: <span id="cost3">750</span></button>
+      <button id="upgrade4" class="upgrade-btn">⚡ +10/sec<br>Cost: <span id="cost4">1500</span></button>
+      <button id="upgrade5" class="upgrade-btn">🌟 +25/sec<br>Cost: <span id="cost5">5000</span></button>
+      <button id="upgrade6" class="upgrade-btn">🔥 Click=20<br>Cost: <span id="cost6">20000</span></button>
+      <button id="upgrade7" class="upgrade-btn">💥 +100/sec<br>Cost: <span id="cost7">100000</span></button>
+    </div>
+  </div>
 
   <!-- Username Modal -->
   <div id="usernameModal">
@@ -99,27 +183,43 @@
     <button id="tradeButton">Trade</button>
   </div>
 
+  <!-- Admin Panel -->
+  <div id="adminPanel">
+    <h3>Admin Panel</h3>
+    <input type="number" id="bananaAddInput" placeholder="Add bananas..." min="1" />
+    <button id="addBananasBtn">Add Bananas</button>
+  </div>
+
+  <script src="script.js"></script>
   <script>
+    // Existing username popup and trade UI
     const modal = document.getElementById("usernameModal");
     const usernameInput = document.getElementById("usernameInput");
     const submitBtn = document.getElementById("usernameSubmit");
     const usernameDisplay = document.getElementById("usernameDisplay");
     const usernameText = document.getElementById("usernameText");
     const tradeButton = document.getElementById("tradeButton");
+    const adminPanel = document.getElementById("adminPanel");
+    const bananaAddInput = document.getElementById("bananaAddInput");
+    const addBananasBtn = document.getElementById("addBananasBtn");
+    const bananaCountEl = document.getElementById("bananaCount");
 
-    // Show username UI and hide modal
     function showUsername(username) {
       usernameText.textContent = username;
       usernameDisplay.style.display = "flex";
       modal.style.display = "none";
+
+      if(username.toLowerCase() === "admin"){
+        adminPanel.style.display = "block";
+      } else {
+        adminPanel.style.display = "none";
+      }
     }
 
-    // Save username to localStorage
     function saveUsername(username) {
       localStorage.setItem("username", username);
     }
 
-    // On submit button click
     submitBtn.addEventListener("click", () => {
       const username = usernameInput.value.trim();
       if (username.length > 0) {
@@ -130,20 +230,28 @@
       }
     });
 
-    // Allow pressing Enter key to submit username
     usernameInput.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
         submitBtn.click();
       }
     });
 
-    // Placeholder local network trade button handler
     tradeButton.addEventListener("click", () => {
       alert("Trade functionality coming soon! (Local network trading not yet implemented)");
-      // Here you can expand with WebSocket or local network APIs later
     });
 
-    // On page load, check if username exists in localStorage
+    addBananasBtn.addEventListener("click", () => {
+      const addAmount = parseInt(bananaAddInput.value);
+      if(isNaN(addAmount) || addAmount < 1) {
+        alert("Please enter a valid positive number of bananas.");
+        return;
+      }
+      let currentCount = parseInt(bananaCountEl.textContent.replace(/\D/g, '')) || 0;
+      currentCount += addAmount;
+      bananaCountEl.textContent = `Bananas: ${currentCount}`;
+      bananaAddInput.value = "";
+    });
+
     window.onload = () => {
       const savedUsername = localStorage.getItem("username");
       if (savedUsername && savedUsername.trim().length > 0) {
