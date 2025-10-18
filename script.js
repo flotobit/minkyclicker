@@ -1,186 +1,459 @@
-// Banana clicker game variables and functions
-let bananas = 0;
-let bananasPerClick = 1;
-let upgradeCost1 = 50;
-let upgradeCost2 = 500;
-let upgradeCost3 = 750;
-let upgradeCost4 = 1500;
-let upgradeCost5 = 5000;
-let upgradeCost6 = 20000;
-let upgradeCost7 = 100000;
-let autoClickRate = 0;
-
-// Load saved values from localStorage
-function loadData() {
-  bananas = Number(localStorage.getItem('bananas')) || 0;
-  bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
-  upgradeCost1 = Number(localStorage.getItem('upgradeCost1')) || 50;
-  upgradeCost2 = Number(localStorage.getItem('upgradeCost2')) || 500;
-  upgradeCost3 = Number(localStorage.getItem('upgradeCost3')) || 750;
-  upgradeCost4 = Number(localStorage.getItem('upgradeCost4')) || 1500;
-  upgradeCost5 = Number(localStorage.getItem('upgradeCost5')) || 5000;
-  upgradeCost6 = Number(localStorage.getItem('upgradeCost6')) || 20000;
-  upgradeCost7 = Number(localStorage.getItem('upgradeCost7')) || 100000;
-  autoClickRate = Number(localStorage.getItem('autoClickRate')) || 0;
-}
-
-// Save current values to localStorage
-function saveData() {
-  localStorage.setItem('bananas', bananas);
-  localStorage.setItem('bananasPerClick', bananasPerClick);
-  localStorage.setItem('upgradeCost1', upgradeCost1);
-  localStorage.setItem('upgradeCost2', upgradeCost2);
-  localStorage.setItem('upgradeCost3', upgradeCost3);
-  localStorage.setItem('upgradeCost4', upgradeCost4);
-  localStorage.setItem('upgradeCost5', upgradeCost5);
-  localStorage.setItem('upgradeCost6', upgradeCost6);
-  localStorage.setItem('upgradeCost7', upgradeCost7);
-  localStorage.setItem('autoClickRate', autoClickRate);
-}
-
-// Update UI elements
-function updateUI() {
-  document.getElementById('bananaCount').textContent = 'Bananas: ' + bananas;
-  document.getElementById('cost1').textContent = upgradeCost1;
-  document.getElementById('cost2').textContent = upgradeCost2;
-  document.getElementById('cost3').textContent = upgradeCost3;
-  document.getElementById('cost4').textContent = upgradeCost4;
-  document.getElementById('cost5').textContent = upgradeCost5;
-  document.getElementById('cost6').textContent = upgradeCost6;
-  document.getElementById('cost7').textContent = upgradeCost7;
-  document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
-}
-
-function saveAndUpdate() {
-  saveData();
-  updateUI();
-}
-
-window.onload = () => {
-  loadData();
-  updateUI();
-
-  document.getElementById('monkeyImage').addEventListener('click', () => {
-    bananas += bananasPerClick;
-    saveAndUpdate();
-  });
-
-  document.getElementById('upgrade1').addEventListener('click', () => {
-    if (bananas >= upgradeCost1) {
-      bananas -= upgradeCost1;
-      bananasPerClick += 1;
-      upgradeCost1 += 25;
-      saveAndUpdate();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MinkyClicker Enhanced</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fafafa;
+      color: #333;
     }
-  });
-
-  document.getElementById('upgrade2').addEventListener('click', () => {
-    if (bananas >= upgradeCost2) {
-      bananas -= upgradeCost2;
-      autoClickRate += 5;
-      upgradeCost2 += 25;
-      saveAndUpdate();
+    .header {
+      background: #444;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
     }
-  });
-
-  document.getElementById('upgrade3').addEventListener('click', () => {
-    if (bananas >= upgradeCost3) {
-      bananas -= upgradeCost3;
-      autoClickRate += 5;
-      upgradeCost3 += 25;
-      saveAndUpdate();
+    .banana-count {
+      font-weight: bold;
+      font-size: 1.2rem;
     }
-  });
-
-  document.getElementById('upgrade4').addEventListener('click', () => {
-    if (bananas >= upgradeCost4) {
-      bananas -= upgradeCost4;
-      autoClickRate += 10;
-      upgradeCost4 += 100;
-      saveAndUpdate();
+    .per-second {
+      font-size: 1rem;
     }
-  });
-
-  document.getElementById('upgrade5').addEventListener('click', () => {
-    if (bananas >= upgradeCost5) {
-      bananas -= upgradeCost5;
-      autoClickRate += 25;
-      upgradeCost5 += 250;
-      saveAndUpdate();
+    .main-area {
+      text-align: center;
+      padding: 20px;
     }
-  });
-
-  document.getElementById('upgrade6').addEventListener('click', () => {
-    if (bananas >= upgradeCost6) {
-      bananas -= upgradeCost6;
-      bananasPerClick = 20;
-      upgradeCost6 += 1000;
-      saveAndUpdate();
+    .main-area img {
+      cursor: pointer;
+      width: 150px;
+      user-select: none;
     }
-  });
-
-  document.getElementById('upgrade7').addEventListener('click', () => {
-    if (bananas >= upgradeCost7) {
-      bananas -= upgradeCost7;
-      autoClickRate += 100;
-      upgradeCost7 += 5000;
-      saveAndUpdate();
+    .game-container, .sidebar {
+      display: flex;
+      gap: 20px;
+      padding: 10px 20px;
     }
-  });
-
-  // Auto bananas per second with UI update
-  setInterval(() => {
-    if (autoClickRate > 0) {
-      bananas += autoClickRate;
-      saveAndUpdate(); // This updates the UI live with new banana count
+    .left-panel, .right-panel, .sidebar {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      flex: 1;
     }
-  }, 1000);
+    .click-power {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .upgrades-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .upgrade-btn {
+      background: #eee;
+      border: 1px solid #bbb;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+      user-select: none;
+    }
+    .upgrade-btn:disabled, .upgrade-btn.disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    .ascend-panel {
+      margin-top: 15px;
+      background: #ddd;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
 
-  // User signup and trade button logic
-  (async () => {
-    let username = localStorage.getItem('username');
-    let role = localStorage.getItem('role');
+    /* Modal overlay styles */
+    #usernameModal {
+      display: block;
+      position: fixed; 
+      z-index: 10000; 
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.4); 
+      overflow: auto;
+    }
+    /* Modal content box */
+    #usernameModalContent {
+      background-color: #fefefe;
+      margin: 15% auto; 
+      padding: 20px;
+      border: 1px solid #888;
+      width: 320px;
+      border-radius: 10px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    #usernameInput {
+      width: 90%;
+      padding: 8px;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+    }
+    #usernameSubmit {
+      padding: 8px 16px;
+      font-size: 1rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #usernameSubmit:hover {
+      background-color: #45a049;
+    }
 
-    if (!username) {
-      username = prompt("Enter your username (no password needed):");
-      if (!username) {
-        alert("Username is required.");
+    /* Bottom-left username + trade container */
+    #usernameDisplay {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: #222;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: Arial, sans-serif;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+    }
+    #tradeButton {
+      background-color: #2196F3;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    #tradeButton:hover {
+      background-color: #0b7dda;
+    }
+
+    /* Admin Panel overlay styles */
+    #adminPanel {
+      position: fixed;
+      top: 50px;
+      right: 20px;
+      width: 280px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+      z-index: 1100;
+      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+      display: none;
+    }
+    #adminPanel h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #bananaAddInput {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    #addBananasBtn {
+      width: 100%;
+      padding: 8px;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #addBananasBtn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="bananaCount" class="banana-count">Bananas: 0</div>
+    <div class="per-second">0 Capybaras per Second</div>
+  </div>
+
+  <div class="main-area">
+    <img id="monkeyImage" src="Adobe-Express-file.jpg" alt="Monkey" />
+  </div>
+
+  <div class="game-container">
+    <div class="left-panel">
+      <img id="capybaraImage" src="image.jpg" alt="Capybara" />
+    </div>
+    <div class="right-panel">
+      <div class="click-power">CLICK POWER<br><span id="clickPower">+1</span></div>
+      <div class="upgrades-list" id="upgradesList">
+        <button id="upgrade1" class="upgrade-btn">🍌 +1/click — Cost: <span id="cost1">50</span></button>
+        <button id="upgrade2" class="upgrade-btn">💨 +5/sec — Cost: <span id="cost2">500</span></button>
+        <button id="upgrade3" class="upgrade-btn">💨 +5/sec — Cost: <span id="cost3">750</span></button>
+        <button id="upgrade4" class="upgrade-btn">⚡ +10/sec — Cost: <span id="cost4">1500</span></button>
+        <button id="upgrade5" class="upgrade-btn">🌟 +25/sec — Cost: <span id="cost5">5000</span></button>
+        <button id="upgrade6" class="upgrade-btn">🔥 Click=20 — Cost: <span id="cost6">20000</span></button>
+        <button id="upgrade7" class="upgrade-btn">💥 +100/sec — Cost: <span id="cost7">100000</span></button>
+      </div>
+      <div class="ascend-panel">
+        Current Multiplier: 1x<br>
+        <button class="ascend-btn">Ascend for +0x</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Username Modal -->
+  <div id="usernameModal">
+    <div id="usernameModalContent">
+      <h2>Enter Your Username</h2>
+      <input type="text" id="usernameInput" placeholder="Username" autocomplete="off" />
+      <br />
+      <button id="usernameSubmit">Submit</button>
+    </div>
+  </div>
+
+  <!-- Username Display with Trade Button -->
+  <div id="usernameDisplay">
+    <span id="usernameText"></span>
+    <button id="tradeButton">Trade</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel">
+    <h3>Admin Panel</h3>
+    <input type="number" id="bananaAddInput" placeholder="Add bananas..." min="1" />
+    <button id="addBananasBtn">Add Bananas</button>
+  </div>
+
+  <script>
+    // Game variables and persistence
+    let bananas = 0;
+    let bananasPerClick = 1;
+    let upgradeCost1 = 50;
+    let upgradeCost2 = 500;
+    let upgradeCost3 = 750;
+    let upgradeCost4 = 1500;
+    let upgradeCost5 = 5000;
+    let upgradeCost6 = 20000;
+    let upgradeCost7 = 100000;
+    let autoClickRate = 0;
+
+    function loadData() {
+      bananas = Number(localStorage.getItem('bananas')) || 0;
+      bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
+      upgradeCost1 = Number(localStorage.getItem('upgradeCost1')) || 50;
+      upgradeCost2 = Number(localStorage.getItem('upgradeCost2')) || 500;
+      upgradeCost3 = Number(localStorage.getItem('upgradeCost3')) || 750;
+      upgradeCost4 = Number(localStorage.getItem('upgradeCost4')) || 1500;
+      upgradeCost5 = Number(localStorage.getItem('upgradeCost5')) || 5000;
+      upgradeCost6 = Number(localStorage.getItem('upgradeCost6')) || 20000;
+      upgradeCost7 = Number(localStorage.getItem('upgradeCost7')) || 100000;
+      autoClickRate = Number(localStorage.getItem('autoClickRate')) || 0;
+    }
+
+    function saveData() {
+      localStorage.setItem('bananas', bananas);
+      localStorage.setItem('bananasPerClick', bananasPerClick);
+      localStorage.setItem('upgradeCost1', upgradeCost1);
+      localStorage.setItem('upgradeCost2', upgradeCost2);
+      localStorage.setItem('upgradeCost3', upgradeCost3);
+      localStorage.setItem('upgradeCost4', upgradeCost4);
+      localStorage.setItem('upgradeCost5', upgradeCost5);
+      localStorage.setItem('upgradeCost6', upgradeCost6);
+      localStorage.setItem('upgradeCost7', upgradeCost7);
+      localStorage.setItem('autoClickRate', autoClickRate);
+    }
+
+    function updateUI() {
+      document.getElementById('bananaCount').textContent = 'Bananas: ' + bananas;
+      document.getElementById('cost1').textContent = upgradeCost1;
+      document.getElementById('cost2').textContent = upgradeCost2;
+      document.getElementById('cost3').textContent = upgradeCost3;
+      document.getElementById('cost4').textContent = upgradeCost4;
+      document.getElementById('cost5').textContent = upgradeCost5;
+      document.getElementById('cost6').textContent = upgradeCost6;
+      document.getElementById('cost7').textContent = upgradeCost7;
+      document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
+      document.querySelector('.per-second').textContent = `${autoClickRate} Capybaras per Second`;
+    }
+
+    function saveAndUpdate() {
+      saveData();
+      updateUI();
+    }
+
+    // Username and admin panel controls
+    const modal = document.getElementById("usernameModal");
+    const usernameInput = document.getElementById("usernameInput");
+    const submitBtn = document.getElementById("usernameSubmit");
+    const usernameDisplay = document.getElementById("usernameDisplay");
+    const usernameText = document.getElementById("usernameText");
+    const tradeButton = document.getElementById("tradeButton");
+    const adminPanel = document.getElementById("adminPanel");
+    const bananaAddInput = document.getElementById("bananaAddInput");
+    const addBananasBtn = document.getElementById("addBananasBtn");
+
+    function showUsername(username) {
+      usernameText.textContent = username;
+      usernameDisplay.style.display = "flex";
+      modal.style.display = "none";
+
+      if (username.toLowerCase() === "flot") {
+        adminPanel.style.display = "block";
+      } else {
+        adminPanel.style.display = "none";
+      }
+    }
+
+    function saveUsername(username) {
+      localStorage.setItem("username", username);
+    }
+
+    // Admin bananas add action
+    addBananasBtn.addEventListener("click", () => {
+      const addAmount = parseInt(bananaAddInput.value);
+      if (isNaN(addAmount) || addAmount < 1) {
+        alert("Please enter a valid positive number of bananas.");
         return;
       }
+      bananas += addAmount;
+      saveAndUpdate();
+      bananaAddInput.value = "";
+    });
 
-      try {
-        const response = await fetch('/.netlify/functions/register', {
-          method: 'POST',
-          body: JSON.stringify({ username }),
-        });
+    // Trade button dummy action
+    tradeButton.addEventListener("click", () => {
+      alert("Trade UI coming soon! (Local network trading not yet implemented)");
+    });
 
-        if (!response.ok) {
-          alert(await response.text());
-          location.reload();
-          return;
+    submitBtn.addEventListener("click", () => {
+      const username = usernameInput.value.trim();
+      if (username.length > 0) {
+        saveUsername(username);
+        showUsername(username);
+      } else {
+        alert("Please enter a username.");
+      }
+    });
+
+    usernameInput.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+        submitBtn.click();
+      }
+    });
+
+    window.onload = () => {
+      loadData();
+      updateUI();
+
+      const savedUsername = localStorage.getItem("username");
+      if (savedUsername && savedUsername.trim().length > 0) {
+        showUsername(savedUsername);
+      } else {
+        modal.style.display = "block";
+        usernameInput.focus();
+      }
+
+      // Monkey click to add bananas
+      document.getElementById('monkeyImage').addEventListener('click', () => {
+        bananas += bananasPerClick;
+        saveAndUpdate();
+      });
+
+      // Upgrades
+      document.getElementById('upgrade1').addEventListener('click', () => {
+        if (bananas >= upgradeCost1) {
+          bananas -= upgradeCost1;
+          bananasPerClick += 1;
+          upgradeCost1 += 25;
+          saveAndUpdate();
         }
+      });
 
-        const data = await response.json();
-        username = data.username;
-        role = data.role;
-        localStorage.setItem('username', username);
-        localStorage.setItem('role', role);
-      } catch (error) {
-        alert('Network error. Please try again later.');
-        return;
-      }
-    }
+      document.getElementById('upgrade2').addEventListener('click', () => {
+        if (bananas >= upgradeCost2) {
+          bananas -= upgradeCost2;
+          autoClickRate += 5;
+          upgradeCost2 += 25;
+          saveAndUpdate();
+        }
+      });
 
-    if (role === 'admin') {
-      const tradeButton = document.createElement('button');
-      tradeButton.id = 'tradeButton';
-      tradeButton.textContent = 'Trade';
-      tradeButton.style.position = 'fixed';
-      tradeButton.style.left = '10px';
-      tradeButton.style.top = '50%';
-      tradeButton.style.zIndex = 1000;
-      tradeButton.onclick = () => alert('Trade UI coming soon!');
-      document.body.appendChild(tradeButton);
-    }
-  })();
-};
+      document.getElementById('upgrade3').addEventListener('click', () => {
+        if (bananas >= upgradeCost3) {
+          bananas -= upgradeCost3;
+          autoClickRate += 5;
+          upgradeCost3 += 25;
+          saveAndUpdate();
+        }
+      });
+
+      document.getElementById('upgrade4').addEventListener('click', () => {
+        if (bananas >= upgradeCost4) {
+          bananas -= upgradeCost4;
+          autoClickRate += 10;
+          upgradeCost4 += 100;
+          saveAndUpdate();
+        }
+      });
+
+      document.getElementById('upgrade5').addEventListener('click', () => {
+        if (bananas >= upgradeCost5) {
+          bananas -= upgradeCost5;
+          autoClickRate += 25;
+          upgradeCost5 += 250;
+          saveAndUpdate();
+        }
+      });
+
+      document.getElementById('upgrade6').addEventListener('click', () => {
+        if (bananas >= upgradeCost6) {
+          bananas -= upgradeCost6;
+          bananasPerClick = 20;
+          upgradeCost6 += 1000;
+          saveAndUpdate();
+        }
+      });
+
+      document.getElementById('upgrade7').addEventListener('click', () => {
+        if (bananas >= upgradeCost7) {
+          bananas -= upgradeCost7;
+          autoClickRate += 100;
+          upgradeCost7 += 5000;
+          saveAndUpdate();
+        }
+      });
+
+      // Auto-click bananas per second loop
+      setInterval(() => {
+        if (autoClickRate > 0) {
+          bananas += autoClickRate;
+          saveAndUpdate();
+        }
+      }, 1000);
+    };
+  </script>
+</body>
+</html>
