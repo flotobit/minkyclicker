@@ -1,154 +1,125 @@
 body {
-  margin: 0; padding: 0; font-family: 'Arial', sans-serif;
-  background: linear-gradient(to top, #264653, #2a9d8f);
-  color: white;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  min-height: 100vh;
   overflow: hidden;
 }
 
-.header {
-  position: fixed;
-  top: 1em;
-  left: 1em;
-  z-index: 1000;
-  text-align: left;
-}
-
 .banana-count {
-  font-size: 3rem;
-  font-weight: bold;
+  position: fixed;
+  top: 24px;
+  left: 32px;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #fffde4;
+  text-shadow: 2px 2px 8px #2c3e50bb;
+  z-index: 1000;
+  letter-spacing: 1px;
 }
 
-.per-second {
-  font-size: 1.4rem;
-  opacity: 0.8;
-}
-
-.game-container {
+.main-area {
   display: flex;
-  height: 100vh;
-  padding-top: 4em;
-  width: 100%;
-}
-
-.left-panel {
-  flex: 3;
-  display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 3em;
+  height: 100vh;
 }
 
-.capybara-figure {
-  width: 300px;
+.monkey-img {
+  width: 260px;
   height: auto;
-  user-select: none;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px #2c3e5099;
+  background: #fffbed;
   cursor: pointer;
+  transition: transform 0.12s;
+  user-select: none;
   image-rendering: pixelated;
-  transition: transform 0.1s ease;
+}
+.monkey-img:active {
+  transform: scale(0.92);
 }
 
-.capybara-figure:active {
-  transform: scale(0.9);
-}
-
-.right-panel {
-  flex: 1;
-  background: #5b2e8a;
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 340px;
+  background: rgba(90, 32, 160, 0.92);
+  border-radius: 24px 0 0 24px;
+  box-shadow: -8px 0 36px #0005;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 1em;
-  box-sizing: border-box;
-  border-radius: 10px 0 0 10px;
-  color: white;
-  overflow-y: auto;
+  align-items: stretch;
+  padding: 32px 16px 16px 16px;
+  z-index: 200;
 }
 
 .click-power {
-  font-weight: 900;
-  font-size: 1.6rem;
-  background: #7f3fbf;
-  padding: 0.7em;
-  border-radius: 0.5em;
+  font-size: 1.3rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 1em;
+  background: #7f3fbf;
+  padding: 16px 0 7px 0;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px #0003;
+  letter-spacing: 2px;
 }
 
 #clickPower {
-  font-size: 2rem;
+  display: block;
+  font-size: 2.45rem;
   color: #ffe066;
+  margin-top: 6px;
 }
 
 .upgrades-list {
-  flex: 1;
-  overflow-y: scroll;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 10px;
+  padding-right: 3px;
 }
 
 .upgrade-btn {
-  display: flex;
-  align-items: center;
-  background: #8e44ad;
+  font-size: 1.2rem;
+  color: #fff;
+  background: linear-gradient(90deg, #7f3fbf 70%, #884BD5 100%);
   border: none;
-  margin-bottom: 0.8em;
-  padding: 0.8em;
-  border-radius: 0.6em;
+  border-radius: 12px;
+  padding: 18px 16px;
+  box-shadow: 0 2px 9px #0002;
+  font-weight: 700;
+  text-align: left;
   cursor: pointer;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  transition: background-color 0.3s;
+  transition: background 0.08s, transform 0.12s;
+  outline: none;
+  line-height: 1.4;
 }
 
-.upgrade-btn:hover:not(.disabled) {
-  background: #af7cc6;
+.upgrade-btn:active {
+  background: linear-gradient(90deg, #5572ee 60%, #6B8DF6 100%);
+  transform: scale(0.95);
 }
 
-.upgrade-btn.disabled {
-  background: #44315a;
+.upgrade-btn[disabled], .upgrade-btn.disabled {
+  background: #44456a !important;
+  color: #bbbbcc;
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
-.icon-placeholder {
-  width: 40px;
-  height: 40px;
-  background: #cab1e9;
-  border-radius: 50%;
-  margin-right: 1em;
+::-webkit-scrollbar {
+  width: 8px;
+  background: #ddd0;
 }
-
-.upgrade-info {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-}
-
-.cost img.coin-icon {
-  width: 20px;
-  margin-right: 0.3em;
-  vertical-align: middle;
-}
-
-.ascend-panel {
-  margin-top: 10px;
-  text-align: center;
-}
-
-.ascend-btn {
-  margin-top: 0.5em;
-  background: #bb86fc;
-  border: none;
-  padding: 0.8em 1.5em;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #3f0071;
-  transition: background-color 0.3s;
-}
-
-.ascend-btn:hover {
-  background: #d9b3ff;
+::-webkit-scrollbar-thumb {
+  background: #5e2c9555;
+  border-radius: 8px;
 }
