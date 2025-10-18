@@ -1,63 +1,154 @@
 body {
-  font-family: 'Arial', sans-serif;
-  background: #eef6f1;
-  margin: 0;
+  margin: 0; padding: 0; font-family: 'Arial', sans-serif;
+  background: linear-gradient(to top, #264653, #2a9d8f);
+  color: white;
   height: 100vh;
-  overflow: hidden; /* Prevent scroll */
-  user-select: none;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+  z-index: 1000;
+  text-align: left;
 }
 
 .banana-count {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  font-size: 24px;
+  font-size: 3rem;
   font-weight: bold;
-  color: #2c3e50;
-  z-index: 1000;
 }
 
-.clicker-image {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 180px;
+.per-second {
+  font-size: 1.4rem;
+  opacity: 0.8;
+}
+
+.game-container {
+  display: flex;
+  height: 100vh;
+  padding-top: 4em;
+  width: 100%;
+}
+
+.left-panel {
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 3em;
+}
+
+.capybara-figure {
+  width: 300px;
+  height: auto;
+  user-select: none;
   cursor: pointer;
   image-rendering: pixelated;
-  user-select: none;
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.1s ease;
 }
 
-.clicker-image:active {
-  transform: translate(-50%, -50%) scale(0.9);
+.capybara-figure:active {
+  transform: scale(0.9);
 }
 
-.upgrades {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
+.right-panel {
+  flex: 1;
+  background: #5b2e8a;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 220px;
-  z-index: 1000;
+  padding: 1em;
+  box-sizing: border-box;
+  border-radius: 10px 0 0 10px;
+  color: white;
+  overflow-y: auto;
 }
 
-.upgrades button {
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
+.click-power {
+  font-weight: 900;
+  font-size: 1.6rem;
+  background: #7f3fbf;
+  padding: 0.7em;
+  border-radius: 0.5em;
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+#clickPower {
+  font-size: 2rem;
+  color: #ffe066;
+}
+
+.upgrades-list {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.upgrade-btn {
+  display: flex;
+  align-items: center;
+  background: #8e44ad;
   border: none;
-  border-radius: 8px;
-  background-color: #27ae60;
+  margin-bottom: 0.8em;
+  padding: 0.8em;
+  border-radius: 0.6em;
+  cursor: pointer;
   color: white;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   transition: background-color 0.3s;
 }
 
-.upgrades button:hover {
-  background-color: #2ecc71;
+.upgrade-btn:hover:not(.disabled) {
+  background: #af7cc6;
+}
+
+.upgrade-btn.disabled {
+  background: #44315a;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.icon-placeholder {
+  width: 40px;
+  height: 40px;
+  background: #cab1e9;
+  border-radius: 50%;
+  margin-right: 1em;
+}
+
+.upgrade-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.cost img.coin-icon {
+  width: 20px;
+  margin-right: 0.3em;
+  vertical-align: middle;
+}
+
+.ascend-panel {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.ascend-btn {
+  margin-top: 0.5em;
+  background: #bb86fc;
+  border: none;
+  padding: 0.8em 1.5em;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #3f0071;
+  transition: background-color 0.3s;
+}
+
+.ascend-btn:hover {
+  background: #d9b3ff;
 }
