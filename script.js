@@ -2,8 +2,9 @@
 let bananas = 0;
 let bananasPerClick = 1;
 let autoClickRate = 0;
+let rebirthMultiplier = 1;
 
-// Expanded upgrade data
+// Upgrades cost and effects arrays
 let upgradeCosts = [
   50, 500, 750, 1500, 5000, 20000, 100000, 250000, 500000, 750000,
   900000, 1000000, 2000000, 3000000, 4000000, 5000000
@@ -30,64 +31,70 @@ let upgradeEffects = [
 
 let codesUsed = new Set();
 
-// Load and save data to localStorage
+// Load saved data from localStorage
 function loadData() {
   bananas = Number(localStorage.getItem('bananas')) || 0;
   bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
   autoClickRate = Number(localStorage.getItem('autoClickRate')) || 0;
+  rebirthMultiplier = Number(localStorage.getItem('rebirthMultiplier')) || 1;
   const savedCosts = JSON.parse(localStorage.getItem('upgradeCosts'));
   if(Array.isArray(savedCosts) && savedCosts.length === upgradeCosts.length){
     upgradeCosts = savedCosts.map(Number);
   }
-  const usedCodes = localStorage.getItem('codesUsed');
-  if(usedCodes){
-    codesUsed = new Set(JSON.parse(usedCodes));
+  const savedCodesUsed = localStorage.getItem("codesUsed");
+  if(savedCodesUsed){
+    codesUsed = new Set(JSON.parse(savedCodesUsed));
   }
 }
 
+// Save current data to localStorage
 function saveData() {
   localStorage.setItem('bananas', bananas);
   localStorage.setItem('bananasPerClick', bananasPerClick);
   localStorage.setItem('autoClickRate', autoClickRate);
   localStorage.setItem('upgradeCosts', JSON.stringify(upgradeCosts));
   localStorage.setItem('codesUsed', JSON.stringify(Array.from(codesUsed)));
+  localStorage.setItem('rebirthMultiplier', rebirthMultiplier);
 }
 
+// Update UI elements dynamically
 function updateUI() {
-  document.getElementById('bananaCount').textContent = 'Bananas: ' + bananas.toLocaleString();
+  document.getElementById('bananaCount').textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
   document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
-  document.querySelector('.per-second').textContent = `${autoClickRate.toLocaleString()} Bananas per Second`;
+  document.querySelector('.per-second').textContent = `${Math.floor(autoClickRate * rebirthMultiplier).toLocaleString()} Bananas per Second (x${rebirthMultiplier.toFixed(2)})`;
+  document.getElementById('rebirthBtn').textContent = `Rebirth (x${(rebirthMultiplier + 0.5).toFixed(2)})`;
   updateUpgradesUI();
-  checkButtons();
 }
 
+// Render upgrade buttons with costs and enable/disable based on bananas
 function updateUpgradesUI() {
   const upgradesList = document.getElementById('upgradesList');
   upgradesList.innerHTML = '';
-  for(let i=0;i<upgradeCosts.length;i++){
+  for(let i = 0; i < upgradeCosts.length; i++){
     const btn = document.createElement('button');
     btn.className = 'upgrade-btn';
     btn.disabled = bananas < upgradeCosts[i];
     let label = '';
-    if(i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    if (i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if (i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
 
     btn.textContent = label;
+
     btn.addEventListener('click', () => {
-      if(bananas >= upgradeCosts[i]) {
+      if (bananas >= upgradeCosts[i]) {
         bananas -= upgradeCosts[i];
         upgradeEffects[i]();
         upgradeCosts[i] = Math.floor(upgradeCosts[i] * 1.5);
@@ -99,16 +106,13 @@ function updateUpgradesUI() {
   }
 }
 
-function checkButtons(){
-  // Optional: enable/disable rebirth button
-}
-
+// Save and refresh display
 function saveAndUpdate(){
   saveData();
   updateUI();
 }
 
-// Interface elements
+// DOM elements references
 const modal = document.getElementById("usernameModal");
 const usernameInput = document.getElementById("usernameInput");
 const submitBtn = document.getElementById("usernameSubmit");
@@ -118,23 +122,24 @@ const tradeButton = document.getElementById("tradeButton");
 const adminPanel = document.getElementById("adminPanel");
 const bananaAddInput = document.getElementById("bananaAddInput");
 const addBananasBtn = document.getElementById("addBananasBtn");
+const adminToggleBtn = document.getElementById("adminToggleBtn");
+const rebirthBtn = document.getElementById("rebirthBtn");
+const restoreBtn = document.getElementById("restoreBtn");
+const codesBtn = document.getElementById("codesBtn");
 
-function showUsername(username) {
+// Display username and show/hide admin panel toggle button
+function showUsername(username){
   usernameText.textContent = username;
   usernameDisplay.style.display = "flex";
   modal.style.display = "none";
-
-  if(username.toLowerCase() === "floto") {
-    adminPanel.style.display = "block";
-  } else {
-    adminPanel.style.display = "none";
-  }
 }
 
-function saveUsername(username) {
+// Save username locally
+function saveUsername(username){
   localStorage.setItem("username", username);
 }
 
+// Add bananas manually in admin panel
 addBananasBtn.addEventListener("click", () => {
   const addAmount = parseInt(bananaAddInput.value);
   if(isNaN(addAmount) || addAmount < 1){
@@ -146,32 +151,98 @@ addBananasBtn.addEventListener("click", () => {
   bananaAddInput.value = "";
 });
 
+// Simple placeholder for trade button
 tradeButton.addEventListener("click", () => {
   alert("Trade UI coming soon! (Local network trading not yet implemented)");
 });
 
+// Username modal logic
 submitBtn.addEventListener("click", () => {
   const username = usernameInput.value.trim();
-  if(username.length > 0) {
+  if(username.length > 0){
     saveUsername(username);
     showUsername(username);
   } else {
     alert("Please enter a username.");
   }
 });
-
-usernameInput.addEventListener("keyup", (event) => {
-  if(event.key === "Enter") {
+usernameInput.addEventListener("keyup", (e) => {
+  if(e.key === "Enter"){
     submitBtn.click();
   }
 });
 
+// Admin panel toggle button with password "admin123"
+adminToggleBtn.addEventListener("click", () => {
+  const password = prompt("Enter admin password:");
+  if(password === "admin123"){
+    adminPanel.style.display = (adminPanel.style.display === "block") ? "none" : "block";
+  } else {
+    alert("Incorrect password.");
+  }
+});
+
+// Rebirth logic: increases multiplier by 0.5, resets bananas and upgrades
+rebirthBtn.addEventListener("click", () => {
+  if(confirm("Rebirth will reset bananas and upgrades but increase multiplier by 0.5x. Continue?")){
+    bananas = 0;
+    bananasPerClick = 1;
+    autoClickRate = 0;
+    upgradeCosts = [
+      50, 500, 750, 1500, 5000, 20000, 100000, 250000,
+      500000, 750000, 900000, 1000000, 2000000, 3000000, 4000000, 5000000
+    ];
+    rebirthMultiplier += 0.5;
+    saveAndUpdate();
+    alert(`Rebirth successful! New multiplier: x${rebirthMultiplier.toFixed(2)}`);
+  }
+});
+
+// Restore button prompts amount and password "hello"
+restoreBtn.addEventListener("click", () => {
+  const amountStr = prompt("Enter amount of bananas to restore:");
+  if(!amountStr) return;
+  const amount = parseInt(amountStr);
+  if(isNaN(amount) || amount < 1){
+    alert("Invalid amount.");
+    return;
+  }
+  const pass = prompt("Enter password to confirm:");
+  if(pass !== "hello"){
+    alert("Incorrect password.");
+    return;
+  }
+  bananas += amount;
+  saveAndUpdate();
+  alert(`Restored ${amount.toLocaleString()} bananas.`);
+});
+
+// Codes button prompts for code. "SORRY" grants 1 million bananas once
+codesBtn.addEventListener("click", () => {
+  const inputCode = prompt("Enter your code:");
+  if(!inputCode) return;
+  const code = inputCode.trim().toUpperCase();
+  if(codesUsed.has(code)){
+    alert("Code already used.");
+    return;
+  }
+  if(code === "SORRY"){
+    bananas += 1000000;
+    codesUsed.add(code);
+    alert("Code accepted! Added 1,000,000 bananas.");
+    saveAndUpdate();
+  } else {
+    alert("Invalid code.");
+  }
+});
+
+// On page load setup
 window.onload = () => {
   loadData();
   updateUI();
 
   const savedUsername = localStorage.getItem("username");
-  if(savedUsername && savedUsername.trim().length > 0) {
+  if(savedUsername && savedUsername.trim().length > 0){
     showUsername(savedUsername);
   } else {
     modal.style.display = "block";
@@ -179,17 +250,15 @@ window.onload = () => {
   }
 
   document.getElementById('monkeyImage').addEventListener('click', () => {
-    bananas += bananasPerClick;
+    bananas += bananasPerClick * rebirthMultiplier;
     saveAndUpdate();
   });
 };
 
-// Auto banana generator loop
+// Auto bananas per second loop includes multiplier
 setInterval(() => {
-  if(autoClickRate > 0) {
-    bananas += autoClickRate;
+  if(autoClickRate > 0){
+    bananas += autoClickRate * rebirthMultiplier;
     saveAndUpdate();
   }
 }, 1000);
-
-// -- Add handlers for rebirth, restore, codes etc. in new script or inline in HTML as needed --
