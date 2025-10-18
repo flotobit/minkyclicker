@@ -1,3 +1,4 @@
+// Banana clicker game variables and functions
 let bananas = 0;
 let bananasPerClick = 1;
 let upgradeCost1 = 50;
@@ -47,6 +48,7 @@ function updateUI() {
   document.getElementById('cost5').textContent = upgradeCost5;
   document.getElementById('cost6').textContent = upgradeCost6;
   document.getElementById('cost7').textContent = upgradeCost7;
+  document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
 }
 
 function saveAndUpdate() {
@@ -54,7 +56,9 @@ function saveAndUpdate() {
   updateUI();
 }
 
+// Main window load
 window.onload = () => {
+  // Load existing game data
   loadData();
   updateUI();
 
@@ -64,7 +68,7 @@ window.onload = () => {
     saveAndUpdate();
   });
 
-  // Upgrades
+  // Upgrades event handlers
   document.getElementById('upgrade1').addEventListener('click', () => {
     if (bananas >= upgradeCost1) {
       bananas -= upgradeCost1;
@@ -130,10 +134,61 @@ window.onload = () => {
 
   // Auto bananas per second
   setInterval(() => {
-    if(autoClickRate > 0) {
+    if (autoClickRate > 0) {
       bananas += autoClickRate;
       saveAndUpdate();
     }
   }, 1000);
+
+  // --- User signup and trade button logic below ---
+
+  (async () => {
+    let username = localStorage.getItem('username');
+    let role = localStorage.getItem('role');
+
+    if (!username) {
+      username = prompt("Enter your username (no password needed):");
+      if (!username) {
+        alert("Username is required.");
+        return;
+      }
+
+      try {
+        const response = await fetch('/.netlify/functions/register', {
+          method: 'POST',
+          body: JSON.stringify({ username }),
+        });
+
+        if (!response.ok) {
+          alert(await response.text());
+          location.reload();
+          return;
+        }
+
+        const data = await response.json();
+        username = data.username;
+        role = data.role;
+
+        localStorage.setItem('username', username);
+        localStorage.setItem('role', role);
+
+      } catch (error) {
+        alert('Network error. Please try again later.');
+        return;
+      }
+    }
+
+    if (role === 'admin') {
+      const tradeButton = document.createElement('button');
+      tradeButton.id = 'tradeButton';
+      tradeButton.textContent = 'Trade';
+      tradeButton.style.position = 'fixed';
+      tradeButton.style.left = '10px';
+      tradeButton.style.top = '50%';
+      tradeButton.style.zIndex = 1000;
+      tradeButton.onclick = () => alert('Trade UI coming soon!');
+      document.body.appendChild(tradeButton);
+    }
+
+  })();
 };
-document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
