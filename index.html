@@ -1,26 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MinkyClicker</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MinkyClicker Enhanced</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="bananaCount" class="banana-count">Bananas: 0</div>
-
-  <img id="monkeyImage" src="Adobe-Express-file.jpg" alt="Monkey Clicker" class="clicker-image" />
-
-  <div class="upgrades">
-    <button id="upgrade1">Upgrade 1 (+1 banana/click) Cost: <span id="cost1">50</span></button>
-    <button id="upgrade2">Upgrade 2 (+5 bananas/sec) Cost: <span id="cost2">500</span></button>
-    <button id="upgrade3">Upgrade 3 (+5 bananas/sec) Cost: <span id="cost3">750</span></button>
-    <button id="upgrade4">Upgrade 4 (+10 bananas/sec) Cost: <span id="cost4">1500</span></button>
-    <button id="upgrade5">Upgrade 5 (+25 bananas/sec) Cost: <span id="cost5">5000</span></button>
-    <button id="upgrade6">Upgrade 6 (Set click to 20 bananas) Cost: <span id="cost6">20000</span></button>
-    <button id="upgrade7">Upgrade 7 (+100 bananas/sec) Cost: <span id="cost7">100000</span></button>
+  <div class="header">
+    <div id="bananaCount" class="banana-count">00</div>
+    <div class="per-second">00 Capybaras per Second</div>
   </div>
 
-  <script src="script.js"></script>
+  <div class="game-container">
+    <div class="left-panel">
+      <img id="capybaraImage" src="image.jpg" alt="Capybara" class="capybara-figure" />
+    </div>
+    <div class="right-panel">
+      <div class="click-power">CLICK POWER<br><span id="clickPower">+01</span></div>
+      <div class="upgrades-list" id="upgradesList">
+        <!-- Upgrades go here dynamically or statically -->
+        <button class="upgrade-btn disabled">
+          <div class="icon-placeholder"></div>
+          <div class="upgrade-info">
+            <div class="name">???</div>
+            <div class="cost"><img src="coin-icon.png" alt="coin" class="coin-icon" />24</div>
+          </div>
+        </button>
+        <!-- More upgrade items -->
+      </div>
+      <div class="ascend-panel">
+        <div class="current-multiplier">Current Multiplier: 1x</div>
+        <button class="ascend-btn">Ascend for +0x</button>
+      </div>
+    </div>
+  </div>
+
+<script src="script.js"></script>
 </body>
 </html>
