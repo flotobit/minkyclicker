@@ -4,10 +4,10 @@ let bananasPerClick = 1;
 let autoClickRate = 0;
 let rebirthMultiplier = 1;
 
-// Upgrades cost and effects arrays
 let upgradeCosts = [
-  50, 500, 750, 1500, 5000, 20000, 100000, 250000, 500000, 750000,
-  900000, 1000000, 2000000, 3000000, 4000000, 5000000
+  50, 500, 750, 1500, 5000, 20000, 100000, 250000,
+  500000, 750000, 900000, 1000000, 2000000, 3000000,
+  4000000, 5000000
 ];
 
 let upgradeEffects = [
@@ -31,7 +31,6 @@ let upgradeEffects = [
 
 let codesUsed = new Set();
 
-// Load saved data from localStorage
 function loadData() {
   bananas = Number(localStorage.getItem('bananas')) || 0;
   bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
@@ -47,7 +46,6 @@ function loadData() {
   }
 }
 
-// Save current data to localStorage
 function saveData() {
   localStorage.setItem('bananas', bananas);
   localStorage.setItem('bananasPerClick', bananasPerClick);
@@ -57,7 +55,6 @@ function saveData() {
   localStorage.setItem('rebirthMultiplier', rebirthMultiplier);
 }
 
-// Update UI elements dynamically
 function updateUI() {
   document.getElementById('bananaCount').textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
   document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
@@ -66,53 +63,49 @@ function updateUI() {
   updateUpgradesUI();
 }
 
-// Render upgrade buttons with costs and enable/disable based on bananas
 function updateUpgradesUI() {
   const upgradesList = document.getElementById('upgradesList');
   upgradesList.innerHTML = '';
-  for(let i = 0; i < upgradeCosts.length; i++){
+  for(let i=0; i < upgradeCosts.length; i++){
     const btn = document.createElement('button');
     btn.className = 'upgrade-btn';
     btn.disabled = bananas < upgradeCosts[i];
     let label = '';
-    if (i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if (i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    if(i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+    else if(i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
 
     btn.textContent = label;
-
     btn.addEventListener('click', () => {
-      if (bananas >= upgradeCosts[i]) {
+      if(bananas >= upgradeCosts[i]){
         bananas -= upgradeCosts[i];
         upgradeEffects[i]();
-        upgradeCosts[i] = Math.floor(upgradeCosts[i] * 1.5);
+        upgradeCosts[i] = Math.floor(upgradeCosts[i]*1.5);
         saveAndUpdate();
       }
     });
-
     upgradesList.appendChild(btn);
   }
 }
 
-// Save and refresh display
 function saveAndUpdate(){
   saveData();
   updateUI();
 }
 
-// DOM elements references
+// DOM elements
 const modal = document.getElementById("usernameModal");
 const usernameInput = document.getElementById("usernameInput");
 const submitBtn = document.getElementById("usernameSubmit");
@@ -127,19 +120,19 @@ const rebirthBtn = document.getElementById("rebirthBtn");
 const restoreBtn = document.getElementById("restoreBtn");
 const codesBtn = document.getElementById("codesBtn");
 
-// Display username and show/hide admin panel toggle button
+// Show username
 function showUsername(username){
   usernameText.textContent = username;
   usernameDisplay.style.display = "flex";
   modal.style.display = "none";
 }
 
-// Save username locally
+// Save username
 function saveUsername(username){
   localStorage.setItem("username", username);
 }
 
-// Add bananas manually in admin panel
+// Admin panel banana adding
 addBananasBtn.addEventListener("click", () => {
   const addAmount = parseInt(bananaAddInput.value);
   if(isNaN(addAmount) || addAmount < 1){
@@ -151,12 +144,12 @@ addBananasBtn.addEventListener("click", () => {
   bananaAddInput.value = "";
 });
 
-// Simple placeholder for trade button
+// Trade button stub
 tradeButton.addEventListener("click", () => {
   alert("Trade UI coming soon! (Local network trading not yet implemented)");
 });
 
-// Username modal logic
+// Username modal submit
 submitBtn.addEventListener("click", () => {
   const username = usernameInput.value.trim();
   if(username.length > 0){
@@ -172,19 +165,23 @@ usernameInput.addEventListener("keyup", (e) => {
   }
 });
 
-// Admin panel toggle button with password "admin123"
+// Admin panel toggle with password prompt
 adminToggleBtn.addEventListener("click", () => {
-  const password = prompt("Enter admin password:");
-  if(password === "admin123"){
-    adminPanel.style.display = (adminPanel.style.display === "block") ? "none" : "block";
+  const pass = prompt("Enter admin password:");
+  if(pass === "admin123"){
+    if(adminPanel.style.display === "block"){
+      adminPanel.style.display = "none";
+    } else {
+      adminPanel.style.display = "block";
+    }
   } else {
     alert("Incorrect password.");
   }
 });
 
-// Rebirth logic: increases multiplier by 0.5, resets bananas and upgrades
+// Rebirth button logic
 rebirthBtn.addEventListener("click", () => {
-  if(confirm("Rebirth will reset bananas and upgrades but increase multiplier by 0.5x. Continue?")){
+  if(confirm("Rebirth resets bananas and upgrades but increases multiplier by 0.5x. Continue?")){
     bananas = 0;
     bananasPerClick = 1;
     autoClickRate = 0;
@@ -194,11 +191,11 @@ rebirthBtn.addEventListener("click", () => {
     ];
     rebirthMultiplier += 0.5;
     saveAndUpdate();
-    alert(`Rebirth successful! New multiplier: x${rebirthMultiplier.toFixed(2)}`);
+    alert(`Rebirth complete! Multiplier is now x${rebirthMultiplier.toFixed(2)}`);
   }
 });
 
-// Restore button prompts amount and password "hello"
+// Restore button logic prompts amount and password "hello"
 restoreBtn.addEventListener("click", () => {
   const amountStr = prompt("Enter amount of bananas to restore:");
   if(!amountStr) return;
@@ -207,7 +204,7 @@ restoreBtn.addEventListener("click", () => {
     alert("Invalid amount.");
     return;
   }
-  const pass = prompt("Enter password to confirm:");
+  const pass = prompt("Enter password:");
   if(pass !== "hello"){
     alert("Incorrect password.");
     return;
@@ -217,13 +214,13 @@ restoreBtn.addEventListener("click", () => {
   alert(`Restored ${amount.toLocaleString()} bananas.`);
 });
 
-// Codes button prompts for code. "SORRY" grants 1 million bananas once
+// Codes redeem button logic
 codesBtn.addEventListener("click", () => {
-  const inputCode = prompt("Enter your code:");
-  if(!inputCode) return;
-  const code = inputCode.trim().toUpperCase();
+  const codeInput = prompt("Enter your code:");
+  if(!codeInput) return;
+  const code = codeInput.trim().toUpperCase();
   if(codesUsed.has(code)){
-    alert("Code already used.");
+    alert("You already used this code.");
     return;
   }
   if(code === "SORRY"){
@@ -236,26 +233,32 @@ codesBtn.addEventListener("click", () => {
   }
 });
 
-// On page load setup
+// Load on page start
 window.onload = () => {
   loadData();
   updateUI();
 
   const savedUsername = localStorage.getItem("username");
-  if(savedUsername && savedUsername.trim().length > 0){
+  if(savedUsername && savedUsername.trim() !== ""){
     showUsername(savedUsername);
   } else {
     modal.style.display = "block";
     usernameInput.focus();
   }
 
-  document.getElementById('monkeyImage').addEventListener('click', () => {
-    bananas += bananasPerClick * rebirthMultiplier;
-    saveAndUpdate();
-  });
+  const loadingScreen = document.getElementById("loadingScreen");
+  if(loadingScreen){
+    loadingScreen.style.display = "none";
+  }
 };
 
-// Auto bananas per second loop includes multiplier
+// Click banana button - add bananas with multiplier
+document.getElementById('clickBananaBtn').addEventListener('click', () => {
+  bananas += bananasPerClick * rebirthMultiplier;
+  saveAndUpdate();
+});
+
+// Autoclick bananas per second loop including multiplier
 setInterval(() => {
   if(autoClickRate > 0){
     bananas += autoClickRate * rebirthMultiplier;
