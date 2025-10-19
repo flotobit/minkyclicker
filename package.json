@@ -1,1 +1,13 @@
+{
+  "name": "flotobit-backend",
+  "version": "1.0.0",
+  "description": "Basic Express backend for Flotobit trading",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
 
