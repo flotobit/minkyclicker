@@ -3,260 +3,257 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MinkyClicker Enhanced</title>
+<title>Minky Clicker</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    margin:0;
-    background:#fafafa;
-    color:#333;
-  }
-  .header {
-    background:#444;
-    color:white;
-    padding:10px 20px;
-    display:flex;
-    gap: 20px;
-    align-items:center;
-  }
-  .banana-count {
-    font-weight:bold;
-    font-size:1.2rem;
-  }
-  .per-second {
-    font-size:1rem;
-  }
-  .game-container {
-    display:flex;
-    gap:20px;
-    padding:10px 20px;
-  }
-  .left-sidebar, .right-panel {
-    background:white;
-    padding:15px;
-    border-radius:10px;
-  }
-  .left-sidebar {
-    width: 140px;
-    display:flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 0.9rem;
-    user-select:none;
-  }
-  .left-sidebar button, .click-btn, .upgrade-btn, #adminToggleBtn {
-    background:#3a86ff;
-    color:white;
-    border:none;
-    border-radius:6px;
-    padding:12px;
-    cursor:pointer;
-    font-weight:bold;
-    font-size: 1rem;
-  }
-  .left-sidebar button:hover, .click-btn:hover, .upgrade-btn:hover, #adminToggleBtn:hover {
-    background:#265dcc;
-  }
-  .right-panel {
-    flex:1;
-    display:flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 500px;
-    overflow-y: auto;
-  }
-  .click-power {
-    font-weight: bold;
-  }
-  .upgrade-btn {
-    justify-content: space-between;
-    user-select:none;
-  }
-  .upgrade-btn:disabled {
-    cursor:not-allowed;
-    opacity:0.5;
-  }
-  /* Loading screen styles */
-  #loadingScreen {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background:#222;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 2rem;
-    z-index: 100000;
-  }
-  /* Username modal */
-  #usernameModal {
-    display:none;
-    position: fixed;
-    z-index: 10000;
-    left:0;top:0;width:100%;height:100%;
-    background: rgba(0,0,0,0.4);
-    overflow:auto;
-  }
-  #usernameModalContent {
-    background:#fefefe;
-    margin:15% auto;
-    padding:20px;
-    width:320px;
-    border-radius:10px;
-    border:1px solid #888;
-    text-align:center;
-  }
-  #usernameInput {
-    width: 90%;
-    padding: 10px;
-    font-size: 1rem;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #aaa;
-  }
-  #usernameSubmit {
-    width: 100%;
-    padding: 10px 0;
-    font-size: 1rem;
-    background: #4CAF50;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-  #usernameSubmit:hover { background: #45a049; }
-  #usernameDisplay {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    background: #222;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    z-index: 11000;
-  }
-  #tradeButton {
-    background: #2196F3;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  #tradeButton:hover { background: #0b7dda; }
-  #adminPanel {
-    position: fixed;
-    top: 50px;
-    right: 20px;
-    width: 280px;
-    background: #333;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 0 10px rgba(0,0,0,0.8);
-    z-index: 11000;
-    display: none;
-  }
-  #adminPanel h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
     text-align: center;
+    background-color: #fffbea;
   }
-  #bananaAddInput {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: none;
-    font-size: 1rem;
-    color: #222;
-  }
-  #addBananasBtn {
-    width: 100%;
-    padding: 10px 0;
-    background: #27ae60;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
+  #monkeyButton img {
+    width: 150px;
     cursor: pointer;
+    transition: transform 0.2s ease;
   }
-  #addBananasBtn:hover {
-    background: #1e8449;
+  #monkeyButton img:hover {
+    transform: scale(1.15);
   }
-  #adminToggleBtn {
+  #settingsButton img {
+    width: 50px;
+    cursor: pointer;
     position: fixed;
     top: 10px;
     right: 10px;
-    z-index: 12000;
-    background: #d35400;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
   }
-  #adminToggleBtn:hover {
-    background: #b03a00;
+  #settingsPanel {
+    display: none;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2px solid #444;
+    padding: 20px;
+    z-index: 1000;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  #settingsPanel h3 {
+    margin-top: 0;
+  }
+  .monkeyOption {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    cursor: pointer;
+    position: relative;
+  }
+  .monkeyOption img.monkeyImg {
+    width: 70px;
+    margin-right: 10px;
+  }
+  .checkMark {
+    position: absolute;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+  }
+  #closeSettingsBtn {
+    margin-top: 15px;
+    font-size: 14px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  #bananasDisplay {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  #rebirthReq {
+    font-weight: bold;
+    margin-bottom: 15px;
   }
 </style>
 </head>
 <body>
 
-<!-- Loading screen -->
-<div id="loadingScreen">Loading...</div>
+<h1>Minky Clicker</h1>
+<div id="bananasDisplay">Bananas: 0</div>
+<div id="rebirthReq">Rebirth cost: 1,000,000 bananas</div>
 
-<div class="header">
-  <div id="bananaCount" class="banana-count">Bananas: 0</div>
-  <div class="per-second">0 Bananas per Second</div>
+<button id="monkeyButton" aria-label="Monkey Click Button">
+  <img id="monkeyImg" src="monkeu.webp" alt="Monkey Click Button" />
+</button>
+
+<button id="settingsButton" aria-label="Settings">
+  <img src="gear-icon.webp" alt="Settings Icon" />
+</button>
+
+<div id="settingsPanel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <h3 id="settingsTitle">Choose your Monkey</h3>
+  <div id="monkeyOptions"></div>
+  <button id="closeSettingsBtn">Close</button>
 </div>
 
-<div class="game-container">
-  <div class="left-sidebar">
-    <button id="rebirthBtn">Rebirth (x1.5)</button>
-    <button id="restoreBtn">Restore</button>
-    <button id="codesBtn">Codes</button>
-  </div>
+<script>
+  // Images list for each rebirth stage - upload your monkey images with these filenames to repo root
+  const monkeys = [
+    "monkeu.webp",
+    "monkey-rebirth1.webp",
+    "monkey-rebirth2.webp"
+    // Add more monkey images here as needed
+  ];
+  const gearIcon = "gear-icon.webp"; // Not used in JS but you have it
+  const checkMarkIcon = "checkmark.webp"; // Checkmark overlay icon
 
-  <div class="right-panel">
-    <button class="click-btn" id="clickBananaBtn">Click for Banana 🍌</button>
-    <div class="click-power">CLICK POWER<br><span id="clickPower">+1</span></div>
-    <div class="upgrades-list" id="upgradesList"></div>
-  </div>
-</div>
+  const baseRebirthCost = 1000000;
+  let bananas = 0;
+  let rebirthCount = 0;
+  let equippedMonkey = 0;
 
-<!-- Username Modal -->
-<div id="usernameModal">
-  <div id="usernameModalContent">
-    <h2>Enter Your Username</h2>
-    <input type="text" id="usernameInput" placeholder="Username" autocomplete="off" />
-    <button id="usernameSubmit">Submit</button>
-  </div>
-</div>
+  // Load saved state from localStorage
+  function loadState() {
+    const savedBananas = parseInt(localStorage.getItem("bananas"));
+    bananas = isNaN(savedBananas) ? 0 : savedBananas;
+    const savedRebirth = parseInt(localStorage.getItem("rebirthCount"));
+    rebirthCount = isNaN(savedRebirth) ? 0 : savedRebirth;
+    const savedEquipped = parseInt(localStorage.getItem("equippedMonkey"));
+    equippedMonkey = isNaN(savedEquipped) ? 0 : savedEquipped;
+  }
 
-<!-- Username display + trade -->
-<div id="usernameDisplay">
-  <span id="usernameText"></span>
-  <button id="tradeButton">Trade</button>
-</div>
+  // Save state to localStorage
+  function saveState() {
+    localStorage.setItem("bananas", bananas);
+    localStorage.setItem("rebirthCount", rebirthCount);
+    localStorage.setItem("equippedMonkey", equippedMonkey);
+  }
 
-<!-- Admin Panel Toggle Button -->
-<button id="adminToggleBtn">Admin Panel</button>
+  // Update the monkey button image depending on equipped monkey
+  function updateMonkeyButton() {
+    const monkeyImg = document.getElementById("monkeyImg");
+    monkeyImg.src = monkeys[equippedMonkey] || monkeys[0];
+  }
 
-<!-- Admin Panel -->
-<div id="adminPanel">
-  <h3>Admin Panel</h3>
-  <input type="number" id="bananaAddInput" placeholder="Add bananas..." min="1" />
-  <button id="addBananasBtn">Add Bananas</button>
-</div>
+  // Update bananas and rebirth UI displays
+  function updateDisplays() {
+    document.getElementById("bananasDisplay").textContent = `Bananas: ${bananas.toLocaleString()}`;
+    const nextCost = baseRebirthCost * Math.pow(2, rebirthCount);
+    document.getElementById("rebirthReq").textContent = `Rebirth cost: ${nextCost.toLocaleString()} bananas`;
+  }
 
-<script src="script.js"></script>
+  // Handle clicking monkey button to gain bananas
+  function onMonkeyClick() {
+    bananas += 1;
+    updateDisplays();
+    saveState();
+  }
+
+  // Check if player can rebirth based on bananas
+  function canRebirth() {
+    const cost = baseRebirthCost * Math.pow(2, rebirthCount);
+    return bananas >= cost;
+  }
+
+  // Perform rebirth if possible
+  function doRebirth() {
+    if (!canRebirth()) {
+      alert("You don't have enough bananas to rebirth!");
+      return;
+    }
+    const cost = baseRebirthCost * Math.pow(2, rebirthCount);
+    bananas -= cost;
+    rebirthCount++;
+    equippedMonkey = Math.min(rebirthCount, monkeys.length -1); // Equip new monkey unlocked
+    updateMonkeyButton();
+    updateDisplays();
+    saveState();
+    alert("Rebirth successful! Your monkey has changed.");
+  }
+
+  // Show settings panel to select equipped monkey
+  function openSettings() {
+    const panel = document.getElementById("settingsPanel");
+    panel.style.display = "block";
+    renderSettingsOptions();
+  }
+
+  // Hide settings panel
+  function closeSettings() {
+    document.getElementById("settingsPanel").style.display = "none";
+  }
+
+  // Render the monkey selection options in settings
+  function renderSettingsOptions() {
+    const container = document.getElementById("monkeyOptions");
+    container.innerHTML = ""; // Clear previous
+    monkeys.forEach((monkey, idx) => {
+      const div = document.createElement("div");
+      div.className = "monkeyOption";
+      div.setAttribute("tabindex", "0");
+      div.setAttribute("role", "button");
+      div.setAttribute("aria-pressed", equippedMonkey === idx ? "true" : "false");
+
+      const img = document.createElement("img");
+      img.src = monkey;
+      img.alt = `Monkey ${idx + 1}`;
+      img.className = "monkeyImg";
+
+      div.appendChild(img);
+
+      if (idx === equippedMonkey) {
+        const check = document.createElement("img");
+        check.src = checkMarkIcon;
+        check.alt = "Equipped";
+        check.className = "checkMark";
+        div.appendChild(check);
+      }
+
+      div.onclick = () => {
+        // Restrict selection to monkeys unlocked by rebirth
+        if (idx <= rebirthCount) {
+          equippedMonkey = idx;
+          updateMonkeyButton();
+          saveState();
+          renderSettingsOptions(); // Refresh display
+        } else {
+          alert("You have not unlocked this monkey yet!");
+        }
+      };
+
+      div.onkeypress = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          div.click();
+        }
+      };
+
+      container.appendChild(div);
+    });
+  }
+
+  // Initialization on page load
+  function init() {
+    loadState();
+    updateDisplays();
+    updateMonkeyButton();
+
+    // Set button event listeners
+    document.getElementById("monkeyButton").addEventListener("click", onMonkeyClick);
+    document.getElementById("monkeyButton").addEventListener("dblclick", doRebirth);
+    document.getElementById("settingsButton").addEventListener("click", openSettings);
+    document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
+
+    // Accessibility: close settings on escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeSettings();
+      }
+    });
+  }
+
+  window.onload = init;
+</script>
+
 </body>
 </html>
