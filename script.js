@@ -1,4 +1,4 @@
-// ----- Variables -----
+// ----- Variables and Game Data -----
 
 let bananas = 0;
 let bananasPerClick = 1;
@@ -42,7 +42,7 @@ let pumpkinUpgradeEffects = [
 let halloweenMode = false;
 let halloweenMultiplierActive = false;
 
-// ---- Element references ----
+// --- UI Elements ---
 const bananaCountDisplay = document.getElementById('bananaCount');
 const clickPowerDisplay = document.getElementById('clickPower');
 const perSecondDisplay = document.querySelector('.per-second');
@@ -63,7 +63,7 @@ const bananaAddInput = document.getElementById('bananaAddInput');
 const addBananasBtn = document.getElementById('addBananasBtn');
 const adminToggleBtn = document.getElementById('adminToggleBtn');
 
-// ---- Load & Save ----
+// --- Load & Save ---
 function loadData() {
   bananas = Number(localStorage.getItem('bananas')) || 0;
   bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
@@ -104,7 +104,7 @@ function saveData() {
   localStorage.setItem('hallowMultiplier', halloweenMultiplierActive);
 }
 
-// ---- UI Updates ----
+// --- UI Updates ---
 function updateUI() {
   if (!halloweenMode) {
     bananaCountDisplay.textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
@@ -199,6 +199,8 @@ function saveAndUpdate() {
   updateUI();
 }
 
+// --- Game Event Listeners ---
+
 clickBananaBtn.addEventListener('click', () => {
   if (halloweenMode) {
     const multiplier = halloweenMultiplierActive ? 1.5 : 1;
@@ -219,13 +221,11 @@ setInterval(() => {
   saveAndUpdate();
 }, 1000);
 
-// Halloween toggle button
 btnHalloween.addEventListener('click', () => {
   halloweenMode = !halloweenMode;
   saveAndUpdate();
 });
 
-// Settings modal buttons
 btnSettings.addEventListener('click', () => {
   settingsModal.style.display = 'flex';
   halloweenMultiplierToggle.checked = halloweenMultiplierActive;
@@ -242,7 +242,6 @@ cancelSettingsBtn.addEventListener('click', () => {
   settingsModal.style.display = 'none';
 });
 
-// Rebirth button
 rebirthBtn.addEventListener('click', () => {
   if (halloweenMode) {
     alert("Rebirth is disabled during Halloween mode.");
@@ -262,7 +261,6 @@ rebirthBtn.addEventListener('click', () => {
   }
 });
 
-// Codes button
 codesBtn.addEventListener('click', () => {
   if (halloweenMode) {
     alert("Codes are disabled during Halloween mode.");
@@ -285,7 +283,6 @@ codesBtn.addEventListener('click', () => {
   }
 });
 
-// Restore button
 restoreBtn.addEventListener('click', () => {
   const amountStr = prompt("Enter amount of bananas to restore:");
   if (!amountStr) return;
@@ -304,7 +301,6 @@ restoreBtn.addEventListener('click', () => {
   alert(`Restored ${amount.toLocaleString()} bananas.`);
 });
 
-// Admin panel toggle
 adminToggleBtn.addEventListener('click', () => {
   const pass = prompt("Enter admin password:");
   if (pass === "admin123") {
@@ -314,7 +310,6 @@ adminToggleBtn.addEventListener('click', () => {
   }
 });
 
-// Admin add bananas
 addBananasBtn.addEventListener('click', () => {
   const addAmount = parseInt(bananaAddInput.value);
   if (isNaN(addAmount) || addAmount < 1) {
@@ -326,13 +321,11 @@ addBananasBtn.addEventListener('click', () => {
   bananaAddInput.value = "";
 });
 
-// Initialization
+// --- Initialization ---
+
 window.onload = () => {
   loadData();
   updateUI();
-
   const loadingScreen = document.getElementById('loadingScreen');
   if (loadingScreen) loadingScreen.style.display = 'none';
-
-  // Username modal logic can be added here as in your existing scripts
 };
