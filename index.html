@@ -206,6 +206,7 @@
   #adminToggleBtn:hover {
     background: #b03a00;
   }
+
   /* Settings Modal */
   #settingsModal {
     position: fixed;
@@ -223,16 +224,18 @@
     width: 320px;
     text-align: center;
   }
-  #monkeySelectForm label {
-    display: block;
-    margin: 10px 0;
+  #settingsModal label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    gap: 10px;
+    font-size: 1.1rem;
+    margin-top: 12px;
   }
-  #monkeySelectForm img {
-    width: 60px;
-    height: 60px;
-    margin-left: 10px;
-    vertical-align: middle;
+  #settingsModal input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
   }
   #settingsModal button {
     margin-top: 15px;
@@ -240,7 +243,7 @@
     font-weight: bold;
     cursor: pointer;
   }
-  #settingsModal #cancelBtn {
+  #cancelSettingsBtn {
     margin-left: 10px;
     margin-top: 10px;
   }
@@ -261,6 +264,8 @@
     <button id="rebirthBtn">Rebirth (x1.5)</button>
     <button id="restoreBtn">Restore</button>
     <button id="codesBtn">Codes</button>
+    <button id="btnHalloween">🦇🎃 Halloween Mode OFF</button>
+    <button id="btnSettings">Settings</button>
   </div>
 
   <div class="right-panel">
@@ -295,24 +300,16 @@
   <button id="addBananasBtn">Add Bananas</button>
 </div>
 
-<!-- Settings Modal for monkey selection -->
+<!-- Settings Modal -->
 <div id="settingsModal">
   <div>
-    <h2>Choose Monkey Icon</h2>
-    <form id="monkeySelectForm">
-      <label>
-        <input type="radio" name="monkeyChoice" value="normal" checked />
-        Normal Monkey
-        <img src="Adobe-Express-file.jpg" alt="normal monkey" />
-      </label>
-      <label>
-        <input type="radio" name="monkeyChoice" value="halloween" />
-        Halloween Monkey
-        <img src="halloween-monkey.png" alt="halloween monkey" />
-      </label>
-    </form>
+    <h2>Settings</h2>
+    <label>
+      <input type="checkbox" id="halloweenMultiplierToggle" />
+      Use 1.5x currency multiplier in Halloween Mode
+    </label>
     <button id="saveSettingsBtn">Save</button>
-    <button id="cancelBtn">Cancel</button>
+    <button id="cancelSettingsBtn">Cancel</button>
   </div>
 </div>
 
