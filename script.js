@@ -1,4 +1,6 @@
-// Game Variables - Normal mode (Bananas)
+// --- Variables ---
+
+// Normal mode (Bananas)
 let bananas = 0;
 let bananasPerClick = 1;
 let autoClickRate = 0;
@@ -28,7 +30,7 @@ let upgradeEffects = [
 ];
 let codesUsed = new Set();
 
-// Halloween mode variables (Pumpkins)
+// Halloween mode (Pumpkins)
 let pumpkins = 0;
 let pumpkinsPerClick = 1;
 let pumpkinAutoRate = 0;
@@ -42,14 +44,10 @@ let pumpkinUpgradeEffects = [
 // Mode Control
 let halloweenMode = false;
 
-// UI Elements
-const btnHalloween = document.createElement("button");
-btnHalloween.textContent = "Halloween";
-btnHalloween.style.marginTop = "10px";
+// Monkey Equip (Normal or Halloween)
+let equippedMonkey = localStorage.getItem('equippedMonkey') || "normal"; // 'normal' or 'halloween'
 
-const leftSidebar = document.querySelector(".left-sidebar");
-leftSidebar.appendChild(btnHalloween);
-
+// --- UI Elements ---
 const bananaCountDisplay = document.getElementById('bananaCount');
 const clickPowerDisplay = document.getElementById('clickPower');
 const perSecondDisplay = document.querySelector('.per-second');
@@ -59,8 +57,15 @@ const codesBtn = document.getElementById('codesBtn');
 const upgradesList = document.getElementById('upgradesList');
 const clickBananaBtn = document.getElementById('clickBananaBtn');
 const header = document.querySelector('.header');
+const leftSidebar = document.querySelector(".left-sidebar");
 
-// Create Halloween header images - hidden by default
+// --- Halloween UI Setup ---
+const btnHalloween = document.createElement("button");
+btnHalloween.textContent = "Halloween";
+btnHalloween.style.marginTop = "10px";
+leftSidebar.appendChild(btnHalloween);
+
+// Batman and pumpkin images in header
 const batImg = document.createElement("img");
 batImg.src = "bat.png";
 batImg.alt = "Bat";
@@ -77,7 +82,7 @@ pumpkinImg.style.display = "none";
 header.insertBefore(batImg, header.firstChild);
 header.insertBefore(pumpkinImg, header.firstChild);
 
-// Halloween music element
+// Halloween music element setup
 let halloweenMusic = document.getElementById('halloweenMusic');
 if (!halloweenMusic) {
   halloweenMusic = document.createElement('audio');
@@ -87,7 +92,108 @@ if (!halloweenMusic) {
   document.body.appendChild(halloweenMusic);
 }
 
-// Load saved data
+// Monkey images for equip feature
+const monkeyImages = {
+  normal: "Adobe-Express-file.jpg",       // Normal monkey image
+  halloween: "halloween-monkey.png"       // Halloween monkey image
+};
+
+// Gear icon settings button
+const gearButton = document.createElement('button');
+gearButton.id = "settingsBtn";
+gearButton.title = "Settings";
+gearButton.style.background = "transparent";
+gearButton.style.border = "none";
+gearButton.style.marginTop = "15px";
+gearButton.style.cursor = "pointer";
+
+const gearIcon = document.createElement('img');
+gearIcon.src = "gear-icon.png"; // Replace with actual gear icon path
+gearIcon.alt = "Settings";
+gearIcon.style.width = "28px";
+gearIcon.style.height = "28px";
+gearIcon.style.display = "block";
+gearButton.appendChild(gearIcon);
+
+leftSidebar.appendChild(gearButton);
+
+// Settings Modal Setup
+const settingsModal = document.createElement('div');
+settingsModal.id = "settingsModal";
+settingsModal.style.position = "fixed";
+settingsModal.style.top = "0";
+settingsModal.style.left = "0";
+settingsModal.style.width = "100%";
+settingsModal.style.height = "100%";
+settingsModal.style.background = "rgba(0,0,0,0.4)";
+settingsModal.style.display = "none";
+settingsModal.style.justifyContent = "center";
+settingsModal.style.alignItems = "center";
+settingsModal.style.zIndex = "15000";
+
+const modalContent = document.createElement('div');
+modalContent.style.background = "#fff";
+modalContent.style.borderRadius = "8px";
+modalContent.style.padding = "20px";
+modalContent.style.width = "320px";
+modalContent.style.textAlign = "center";
+
+const modalTitle = document.createElement('h2');
+modalTitle.textContent = "Choose Monkey Icon";
+modalContent.appendChild(modalTitle);
+
+const form = document.createElement('form');
+form.id = 'monkeySelectForm';
+
+for (const [key, imgSrc] of Object.entries(monkeyImages)) {
+  const label = document.createElement('label');
+  label.style.display = 'block';
+  label.style.margin = '10px 0';
+  label.style.cursor = "pointer";
+
+  const radio = document.createElement('input');
+  radio.type = "radio";
+  radio.name = "monkeyChoice";
+  radio.value = key;
+  if (key === equippedMonkey) radio.checked = true;
+
+  const img = document.createElement('img');
+  img.src = imgSrc;
+  img.alt = key + " monkey";
+  img.style.width = "60px";
+  img.style.height = "60px";
+  img.style.marginLeft = "10px";
+  img.style.verticalAlign = "middle";
+
+  label.appendChild(radio);
+  label.appendChild(img);
+  form.appendChild(label);
+}
+
+modalContent.appendChild(form);
+
+const saveBtn = document.createElement('button');
+saveBtn.textContent = "Save";
+saveBtn.style.marginTop = "15px";
+saveBtn.style.padding = "10px 20px";
+saveBtn.style.fontWeight = "bold";
+saveBtn.style.cursor = "pointer";
+modalContent.appendChild(saveBtn);
+
+const cancelBtn = document.createElement('button');
+cancelBtn.textContent = "Cancel";
+cancelBtn.style.marginTop = "10px";
+cancelBtn.style.marginLeft = "10px";
+cancelBtn.style.padding = "10px 20px";
+cancelBtn.style.cursor = "pointer";
+modalContent.appendChild(cancelBtn);
+
+settingsModal.appendChild(modalContent);
+
+document.body.appendChild(settingsModal);
+
+// --- Load/Save System ---
+
 function loadData() {
   bananas = Number(localStorage.getItem('bananas')) || 0;
   bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
@@ -109,6 +215,7 @@ function loadData() {
     pumpkinUpgradeCosts = phCosts.map(Number);
   }
   halloweenMode = localStorage.getItem('halloweenMode') === 'true' || false;
+  equippedMonkey = localStorage.getItem('equippedMonkey') || "normal";
 }
 
 function saveData() {
@@ -123,9 +230,11 @@ function saveData() {
   localStorage.setItem('pumpkinAutoRate', pumpkinAutoRate);
   localStorage.setItem('pumpkinUpgradeCosts', JSON.stringify(pumpkinUpgradeCosts));
   localStorage.setItem('halloweenMode', halloweenMode);
+  localStorage.setItem('equippedMonkey', equippedMonkey);
 }
 
-// Update UI
+// --- UI Updates ---
+
 function updateUI() {
   if (!halloweenMode) {
     bananaCountDisplay.textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
@@ -135,6 +244,7 @@ function updateUI() {
     codesBtn.disabled = false;
     rebirthBtn.style.display = 'inline-block';
     codesBtn.style.display = 'inline-block';
+    restoreBtn.style.display = 'inline-block';
     batImg.style.display = 'none';
     pumpkinImg.style.display = 'none';
     halloweenMusic.pause();
@@ -148,15 +258,17 @@ function updateUI() {
     codesBtn.disabled = true;
     rebirthBtn.style.display = 'none';
     codesBtn.style.display = 'none';
+    restoreBtn.style.display = 'none';
     batImg.style.display = '';
     pumpkinImg.style.display = '';
     halloweenMusic.play();
     clickBananaBtn.textContent = 'Click for Pumpkin 🎃';
   }
   updateUpgradesUI();
+  updateClickButtonIcon();
 }
 
-// Update Upgrades UI
+// Update upgrade buttons UI
 function updateUpgradesUI() {
   upgradesList.innerHTML = '';
   if (!halloweenMode) {
@@ -217,12 +329,38 @@ function updateUpgradesUI() {
   }
 }
 
+// Save and update UI
 function saveAndUpdate() {
   saveData();
   updateUI();
 }
 
-// Clicking main button
+// Update main click button icon based on equipped monkey and mode
+function updateClickButtonIcon() {
+  let iconSrc = monkeyImages.normal;
+  if (halloweenMode) {
+    iconSrc = equippedMonkey === "halloween" ? monkeyImages.halloween : monkeyImages.normal;
+  } else {
+    iconSrc = equippedMonkey === "normal" ? monkeyImages.normal : monkeyImages.halloween;
+  }
+
+  // Clear old icons first
+  clickBananaBtn.querySelectorAll('img').forEach(img => img.remove());
+
+  const iconImg = document.createElement('img');
+  iconImg.src = iconSrc;
+  iconImg.alt = "Monkey Icon";
+  iconImg.style.width = "32px";
+  iconImg.style.height = "32px";
+  iconImg.style.marginRight = "8px";
+  iconImg.style.verticalAlign = "middle";
+
+  clickBananaBtn.prepend(iconImg);
+}
+
+// --- Event Listeners ---
+
+// Main click button
 clickBananaBtn.addEventListener('click', () => {
   if (!halloweenMode) {
     bananas += bananasPerClick * rebirthMultiplier;
@@ -247,13 +385,13 @@ setInterval(() => {
   }
 }, 1000);
 
-// Toggle Halloween Mode
+// Halloween toggle
 btnHalloween.addEventListener('click', () => {
   halloweenMode = !halloweenMode;
   saveAndUpdate();
 });
 
-// Rebirth button and codes disabled in Halloween mode
+// Rebirth button
 rebirthBtn.addEventListener('click', () => {
   if (halloweenMode) {
     alert("Rebirth is disabled during Halloween mode.");
@@ -273,6 +411,7 @@ rebirthBtn.addEventListener('click', () => {
   }
 });
 
+// Codes button
 codesBtn.addEventListener('click', () => {
   if (halloweenMode) {
     alert("Codes are disabled during Halloween mode.");
@@ -295,12 +434,80 @@ codesBtn.addEventListener('click', () => {
   }
 });
 
-// Load data on page load
+// Restore button - fixed to properly work with inputs and password
+restoreBtn.addEventListener('click', () => {
+  const amountStr = prompt("Enter amount of bananas to restore:");
+  if (!amountStr) return;
+  const amount = parseInt(amountStr);
+  if (isNaN(amount) || amount < 1) {
+    alert("Invalid amount.");
+    return;
+  }
+  const password = prompt("Enter password:");
+  if (password !== "hello") {
+    alert("Incorrect password.");
+    return;
+  }
+  bananas += amount;
+  saveAndUpdate();
+  alert(`Restored ${amount.toLocaleString()} bananas.`);
+});
+
+// Admin panel toggle with password check
+const adminPanel = document.getElementById("adminPanel");
+const bananaAddInput = document.getElementById("bananaAddInput");
+const addBananasBtn = document.getElementById("addBananasBtn");
+const adminToggleBtn = document.getElementById("adminToggleBtn");
+
+adminToggleBtn.addEventListener('click', () => {
+  const pass = prompt("Enter admin password:");
+  if (pass === "admin123") {
+    adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
+  } else {
+    alert("Incorrect password.");
+  }
+});
+
+// Admin add bananas button
+addBananasBtn.addEventListener('click', () => {
+  const addAmount = parseInt(bananaAddInput.value);
+  if (isNaN(addAmount) || addAmount < 1) {
+    alert("Please enter a valid positive number of bananas.");
+    return;
+  }
+  bananas += addAmount;
+  saveAndUpdate();
+  bananaAddInput.value = "";
+});
+
+// Settings modal event handlers
+gearButton.addEventListener('click', () => {
+  settingsModal.style.display = "flex";
+});
+
+cancelBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsModal.style.display = "none";
+});
+
+saveBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  const chosenRadio = document.querySelector('input[name="monkeyChoice"]:checked');
+  if (chosenRadio) {
+    equippedMonkey = chosenRadio.value;
+    localStorage.setItem('equippedMonkey', equippedMonkey);
+    updateClickButtonIcon();
+    settingsModal.style.display = "none";
+  }
+});
+
+// --- Initialization ---
+
 window.onload = () => {
   loadData();
   updateUI();
+  updateClickButtonIcon();
 
-  // Show username modal logic here...
   const loadingScreen = document.getElementById('loadingScreen');
   if (loadingScreen) loadingScreen.style.display = 'none';
 };
