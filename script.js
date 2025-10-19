@@ -1,15 +1,13 @@
-// Game state variables
+// Game Variables - Normal mode (Bananas)
 let bananas = 0;
 let bananasPerClick = 1;
 let autoClickRate = 0;
 let rebirthMultiplier = 1;
-
 let upgradeCosts = [
   50, 500, 750, 1500, 5000, 20000, 100000, 250000,
   500000, 750000, 900000, 1000000, 2000000, 3000000,
   4000000, 5000000
 ];
-
 let upgradeEffects = [
   () => bananasPerClick += 1,
   () => autoClickRate += 5,
@@ -28,22 +26,89 @@ let upgradeEffects = [
   () => bananasPerClick += 500,
   () => autoClickRate += 5000
 ];
-
 let codesUsed = new Set();
 
+// Halloween mode variables (Pumpkins)
+let pumpkins = 0;
+let pumpkinsPerClick = 1;
+let pumpkinAutoRate = 0;
+let pumpkinUpgradeCosts = [30, 100, 300];
+let pumpkinUpgradeEffects = [
+  () => pumpkinsPerClick += 1,
+  () => pumpkinAutoRate += 2,
+  () => pumpkinAutoRate += 5
+];
+
+// Mode Control
+let halloweenMode = false;
+
+// UI Elements
+const btnHalloween = document.createElement("button");
+btnHalloween.textContent = "Halloween";
+btnHalloween.style.marginTop = "10px";
+
+const leftSidebar = document.querySelector(".left-sidebar");
+leftSidebar.appendChild(btnHalloween);
+
+const bananaCountDisplay = document.getElementById('bananaCount');
+const clickPowerDisplay = document.getElementById('clickPower');
+const perSecondDisplay = document.querySelector('.per-second');
+const rebirthBtn = document.getElementById('rebirthBtn');
+const restoreBtn = document.getElementById('restoreBtn');
+const codesBtn = document.getElementById('codesBtn');
+const upgradesList = document.getElementById('upgradesList');
+const clickBananaBtn = document.getElementById('clickBananaBtn');
+const header = document.querySelector('.header');
+
+// Create Halloween header images - hidden by default
+const batImg = document.createElement("img");
+batImg.src = "bat.png";
+batImg.alt = "Bat";
+batImg.style.height = "40px";
+batImg.style.marginRight = "10px";
+batImg.style.display = "none";
+
+const pumpkinImg = document.createElement("img");
+pumpkinImg.src = "pumpkin.png";
+pumpkinImg.alt = "Pumpkin";
+pumpkinImg.style.height = "40px";
+pumpkinImg.style.display = "none";
+
+header.insertBefore(batImg, header.firstChild);
+header.insertBefore(pumpkinImg, header.firstChild);
+
+// Halloween music element
+let halloweenMusic = document.getElementById('halloweenMusic');
+if (!halloweenMusic) {
+  halloweenMusic = document.createElement('audio');
+  halloweenMusic.id = 'halloweenMusic';
+  halloweenMusic.loop = true;
+  halloweenMusic.src = 'FreeSounds-CreepyDrone2.mp3';
+  document.body.appendChild(halloweenMusic);
+}
+
+// Load saved data
 function loadData() {
   bananas = Number(localStorage.getItem('bananas')) || 0;
   bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
   autoClickRate = Number(localStorage.getItem('autoClickRate')) || 0;
   rebirthMultiplier = Number(localStorage.getItem('rebirthMultiplier')) || 1;
   const savedCosts = JSON.parse(localStorage.getItem('upgradeCosts'));
-  if(Array.isArray(savedCosts) && savedCosts.length === upgradeCosts.length){
+  if (Array.isArray(savedCosts) && savedCosts.length === upgradeCosts.length) {
     upgradeCosts = savedCosts.map(Number);
   }
   const savedCodesUsed = localStorage.getItem("codesUsed");
-  if(savedCodesUsed){
+  if (savedCodesUsed) {
     codesUsed = new Set(JSON.parse(savedCodesUsed));
   }
+  pumpkins = Number(localStorage.getItem('pumpkins')) || 0;
+  pumpkinsPerClick = Number(localStorage.getItem('pumpkinsPerClick')) || 1;
+  pumpkinAutoRate = Number(localStorage.getItem('pumpkinAutoRate')) || 0;
+  const phCosts = JSON.parse(localStorage.getItem('pumpkinUpgradeCosts'));
+  if (Array.isArray(phCosts) && phCosts.length === pumpkinUpgradeCosts.length) {
+    pumpkinUpgradeCosts = phCosts.map(Number);
+  }
+  halloweenMode = localStorage.getItem('halloweenMode') === 'true' || false;
 }
 
 function saveData() {
@@ -53,125 +118,148 @@ function saveData() {
   localStorage.setItem('upgradeCosts', JSON.stringify(upgradeCosts));
   localStorage.setItem('codesUsed', JSON.stringify(Array.from(codesUsed)));
   localStorage.setItem('rebirthMultiplier', rebirthMultiplier);
+  localStorage.setItem('pumpkins', pumpkins);
+  localStorage.setItem('pumpkinsPerClick', pumpkinsPerClick);
+  localStorage.setItem('pumpkinAutoRate', pumpkinAutoRate);
+  localStorage.setItem('pumpkinUpgradeCosts', JSON.stringify(pumpkinUpgradeCosts));
+  localStorage.setItem('halloweenMode', halloweenMode);
 }
 
+// Update UI
 function updateUI() {
-  document.getElementById('bananaCount').textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
-  document.getElementById('clickPower').textContent = `+${bananasPerClick}`;
-  document.querySelector('.per-second').textContent = `${Math.floor(autoClickRate * rebirthMultiplier).toLocaleString()} Bananas per Second (x${rebirthMultiplier.toFixed(2)})`;
-  document.getElementById('rebirthBtn').textContent = `Rebirth (x${(rebirthMultiplier + 0.5).toFixed(2)})`;
+  if (!halloweenMode) {
+    bananaCountDisplay.textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
+    clickPowerDisplay.textContent = `+${bananasPerClick}`;
+    perSecondDisplay.textContent = `${Math.floor(autoClickRate * rebirthMultiplier).toLocaleString()} Bananas per Second (x${rebirthMultiplier.toFixed(2)})`;
+    rebirthBtn.disabled = false;
+    codesBtn.disabled = false;
+    rebirthBtn.style.display = 'inline-block';
+    codesBtn.style.display = 'inline-block';
+    batImg.style.display = 'none';
+    pumpkinImg.style.display = 'none';
+    halloweenMusic.pause();
+    halloweenMusic.currentTime = 0;
+    clickBananaBtn.textContent = 'Click for Banana 🍌';
+  } else {
+    bananaCountDisplay.textContent = 'Pumpkins: ' + Math.floor(pumpkins).toLocaleString();
+    clickPowerDisplay.textContent = `+${pumpkinsPerClick}`;
+    perSecondDisplay.textContent = `${Math.floor(pumpkinAutoRate).toLocaleString()} Pumpkins per Second`;
+    rebirthBtn.disabled = true;
+    codesBtn.disabled = true;
+    rebirthBtn.style.display = 'none';
+    codesBtn.style.display = 'none';
+    batImg.style.display = '';
+    pumpkinImg.style.display = '';
+    halloweenMusic.play();
+    clickBananaBtn.textContent = 'Click for Pumpkin 🎃';
+  }
   updateUpgradesUI();
 }
 
+// Update Upgrades UI
 function updateUpgradesUI() {
-  const upgradesList = document.getElementById('upgradesList');
   upgradesList.innerHTML = '';
-  for(let i=0; i < upgradeCosts.length; i++){
-    const btn = document.createElement('button');
-    btn.className = 'upgrade-btn';
-    btn.disabled = bananas < upgradeCosts[i];
-    let label = '';
-    if(i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
-    else if(i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+  if (!halloweenMode) {
+    for (let i = 0; i < upgradeCosts.length; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'upgrade-btn';
+      btn.disabled = bananas < upgradeCosts[i];
+      let label = '';
+      if (i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 1 || i === 2) label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 3) label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 4) label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 5) label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 6) label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 7) label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 8) label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 9) label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 10) label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 11) label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 12) label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 13) label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 14) label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
+      else if (i === 15) label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`;
 
-    btn.textContent=label;
-    btn.addEventListener('click', () => {
-      if(bananas >= upgradeCosts[i]){
-        bananas -= upgradeCosts[i];
-        upgradeEffects[i]();
-        upgradeCosts[i] = Math.floor(upgradeCosts[i]*1.5);
-        saveAndUpdate();
-      }
-    });
-    upgradesList.appendChild(btn);
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        if (bananas >= upgradeCosts[i]) {
+          bananas -= upgradeCosts[i];
+          upgradeEffects[i]();
+          upgradeCosts[i] = Math.floor(upgradeCosts[i] * 1.5);
+          saveAndUpdate();
+        }
+      });
+      upgradesList.appendChild(btn);
+    }
+  } else {
+    // Halloween upgrades
+    for (let i = 0; i < pumpkinUpgradeCosts.length; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'upgrade-btn';
+      btn.disabled = pumpkins < pumpkinUpgradeCosts[i];
+      let label = '';
+      if (i === 0) label = `🎃 +1/click — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`;
+      else if (i === 1) label = `👻 +2/sec — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`;
+      else if (i === 2) label = `🕸️ +5/sec — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`;
+
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        if (pumpkins >= pumpkinUpgradeCosts[i]) {
+          pumpkins -= pumpkinUpgradeCosts[i];
+          pumpkinUpgradeEffects[i]();
+          pumpkinUpgradeCosts[i] = Math.floor(pumpkinUpgradeCosts[i] * 1.7);
+          saveAndUpdate();
+        }
+      });
+      upgradesList.appendChild(btn);
+    }
   }
 }
 
-function saveAndUpdate(){
+function saveAndUpdate() {
   saveData();
   updateUI();
 }
 
-const modal = document.getElementById("usernameModal");
-const usernameInput = document.getElementById("usernameInput");
-const submitBtn = document.getElementById("usernameSubmit");
-const usernameDisplay = document.getElementById("usernameDisplay");
-const usernameText = document.getElementById("usernameText");
-const tradeButton = document.getElementById("tradeButton");
-const adminPanel = document.getElementById("adminPanel");
-const bananaAddInput = document.getElementById("bananaAddInput");
-const addBananasBtn = document.getElementById("addBananasBtn");
-const adminToggleBtn = document.getElementById("adminToggleBtn");
-const rebirthBtn = document.getElementById("rebirthBtn");
-const restoreBtn = document.getElementById("restoreBtn");
-const codesBtn = document.getElementById("codesBtn");
+// Clicking main button
+clickBananaBtn.addEventListener('click', () => {
+  if (!halloweenMode) {
+    bananas += bananasPerClick * rebirthMultiplier;
+  } else {
+    pumpkins += pumpkinsPerClick;
+  }
+  saveAndUpdate();
+});
 
-function showUsername(username){
-  usernameText.textContent = username;
-  usernameDisplay.style.display = "flex";
-  modal.style.display = "none";
-}
+// Auto gains per second
+setInterval(() => {
+  if (!halloweenMode) {
+    if (autoClickRate > 0) {
+      bananas += autoClickRate * rebirthMultiplier;
+      saveAndUpdate();
+    }
+  } else {
+    if (pumpkinAutoRate > 0) {
+      pumpkins += pumpkinAutoRate;
+      saveAndUpdate();
+    }
+  }
+}, 1000);
 
-function saveUsername(username){
-  localStorage.setItem("username", username);
-}
+// Toggle Halloween Mode
+btnHalloween.addEventListener('click', () => {
+  halloweenMode = !halloweenMode;
+  saveAndUpdate();
+});
 
-addBananasBtn.addEventListener("click", () => {
-  const addAmount = parseInt(bananaAddInput.value);
-  if(isNaN(addAmount) || addAmount < 1){
-    alert("Please enter a valid positive number of bananas.");
+// Rebirth button and codes disabled in Halloween mode
+rebirthBtn.addEventListener('click', () => {
+  if (halloweenMode) {
+    alert("Rebirth is disabled during Halloween mode.");
     return;
   }
-  bananas += addAmount;
-  saveAndUpdate();
-  bananaAddInput.value = "";
-});
-
-tradeButton.addEventListener("click", () => {
-  alert("Trade UI coming soon! (Local network trading not yet implemented)");
-});
-
-submitBtn.addEventListener("click", () => {
-  const username = usernameInput.value.trim();
-  if(username.length > 0){
-    saveUsername(username);
-    showUsername(username);
-  } else {
-    alert("Please enter a username.");
-  }
-});
-usernameInput.addEventListener("keyup", (e) => {
-  if(e.key === "Enter"){
-    submitBtn.click();
-  }
-});
-
-// Admin panel toggle button with password "admin123"
-adminToggleBtn.addEventListener("click", () => {
-  const pass = prompt("Enter admin password:");
-  if(pass === "admin123"){
-    adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
-  } else {
-    alert("Incorrect password.");
-  }
-});
-
-// Rebirth button resets bananas and upgrades but increases multiplier by 0.5x
-rebirthBtn.addEventListener("click", () => {
-  if(confirm("Rebirth resets bananas and upgrades but increases multiplier by 0.5x. Continue?")){
+  if (confirm("Rebirth resets bananas and upgrades but increases multiplier by 0.5x. Continue?")) {
     bananas = 0;
     bananasPerClick = 1;
     autoClickRate = 0;
@@ -185,35 +273,19 @@ rebirthBtn.addEventListener("click", () => {
   }
 });
 
-// Restore button prompts amount + password "hello"
-restoreBtn.addEventListener("click", () => {
-  const amountStr = prompt("Enter amount of bananas to restore:");
-  if(!amountStr) return;
-  const amount = parseInt(amountStr);
-  if(isNaN(amount) || amount < 1){
-    alert("Invalid amount.");
+codesBtn.addEventListener('click', () => {
+  if (halloweenMode) {
+    alert("Codes are disabled during Halloween mode.");
     return;
   }
-  const password = prompt("Enter password:");
-  if(password !== "hello"){
-    alert("Incorrect password.");
-    return;
-  }
-  bananas += amount;
-  saveAndUpdate();
-  alert(`Restored ${amount.toLocaleString()} bananas.`);
-});
-
-// Codes redeem logic, "SORRY" grants 1 million bananas once
-codesBtn.addEventListener("click", () => {
   const inputCode = prompt("Enter your code:");
-  if(!inputCode) return;
+  if (!inputCode) return;
   const code = inputCode.trim().toUpperCase();
-  if(codesUsed.has(code)){
+  if (codesUsed.has(code)) {
     alert("You already used this code.");
     return;
   }
-  if(code === "SORRY"){
+  if (code === "SORRY") {
     bananas += 1000000;
     codesUsed.add(code);
     alert("Code accepted! Added 1,000,000 bananas.");
@@ -223,32 +295,12 @@ codesBtn.addEventListener("click", () => {
   }
 });
 
+// Load data on page load
 window.onload = () => {
   loadData();
   updateUI();
 
-  const savedUsername = localStorage.getItem("username");
-  if(savedUsername && savedUsername.trim() !== ""){
-    showUsername(savedUsername);
-  } else {
-    modal.style.display = "block";
-    usernameInput.focus();
-  }
-
+  // Show username modal logic here...
   const loadingScreen = document.getElementById('loadingScreen');
-  if(loadingScreen) loadingScreen.style.display = 'none';
+  if (loadingScreen) loadingScreen.style.display = 'none';
 };
-
-// Click banana button
-document.getElementById('clickBananaBtn').addEventListener('click', () => {
-  bananas += bananasPerClick * rebirthMultiplier;
-  saveAndUpdate();
-});
-
-// Auto bananas gain with multiplier
-setInterval(() => {
-  if(autoClickRate > 0){
-    bananas += autoClickRate * rebirthMultiplier;
-    saveAndUpdate();
-  }
-}, 1000);
