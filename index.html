@@ -206,6 +206,44 @@
   #adminToggleBtn:hover {
     background: #b03a00;
   }
+  /* Settings Modal */
+  #settingsModal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 15000;
+  }
+  #settingsModal > div {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 320px;
+    text-align: center;
+  }
+  #monkeySelectForm label {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+  }
+  #monkeySelectForm img {
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  #settingsModal button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #settingsModal #cancelBtn {
+    margin-left: 10px;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
@@ -257,6 +295,31 @@
   <button id="addBananasBtn">Add Bananas</button>
 </div>
 
+<!-- Settings Modal for monkey selection -->
+<div id="settingsModal">
+  <div>
+    <h2>Choose Monkey Icon</h2>
+    <form id="monkeySelectForm">
+      <label>
+        <input type="radio" name="monkeyChoice" value="normal" checked />
+        Normal Monkey
+        <img src="Adobe-Express-file.jpg" alt="normal monkey" />
+      </label>
+      <label>
+        <input type="radio" name="monkeyChoice" value="halloween" />
+        Halloween Monkey
+        <img src="halloween-monkey.png" alt="halloween monkey" />
+      </label>
+    </form>
+    <button id="saveSettingsBtn">Save</button>
+    <button id="cancelBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- Halloween Music -->
+<audio id="halloweenMusic" loop src="FreeSounds-CreepyDrone2.mp3" preload="auto"></audio>
+
 <script src="script.js"></script>
 </body>
 </html>
+
