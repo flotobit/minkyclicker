@@ -63,7 +63,38 @@ const bananaAddInput = document.getElementById('bananaAddInput');
 const addBananasBtn = document.getElementById('addBananasBtn');
 const adminToggleBtn = document.getElementById('adminToggleBtn');
 
-// --- Load & Save ---
+// ----- Helper Functions For Animation -----
+
+// Add .button-animated class to all relevant button elements
+function buttonAnimationSetup() {
+  document.querySelectorAll('button').forEach(btn => btn.classList.add('button-animated'));
+}
+
+// Bat or banana burst animation on main click
+function flyBurst(icon, x, y) {
+  const e = document.createElement('div');
+  e.className = 'burst-effect';
+  e.style.left = x + 'px';
+  e.style.top = y + 'px';
+  e.textContent = icon;
+  document.body.appendChild(e);
+  setTimeout(() => e.remove(), 900);
+}
+
+// Rain pumpkins animation
+function rainPumpkins() {
+  for (let i = 0; i < 5; i++) {
+    const e = document.createElement('div');
+    e.className = 'pumpkin-rain';
+    e.textContent = '🎃';
+    // Random horizontal spread
+    e.style.left = `${Math.random()*88+6}vw`;
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 1300 + Math.random()*100);
+  }
+}
+
+// ----- Load & Save -----
 function loadData() {
   bananas = Number(localStorage.getItem('bananas')) || 0;
   bananasPerClick = Number(localStorage.getItem('bananasPerClick')) || 1;
@@ -104,7 +135,7 @@ function saveData() {
   localStorage.setItem('hallowMultiplier', halloweenMultiplierActive);
 }
 
-// --- UI Updates ---
+// ----- UI Updates -----
 function updateUI() {
   if (!halloweenMode) {
     bananaCountDisplay.textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
@@ -140,7 +171,7 @@ function updateUpgradesUI() {
   if (!halloweenMode) {
     for (let i = 0; i < upgradeCosts.length; i++) {
       const btn = document.createElement('button');
-      btn.className = 'upgrade-btn';
+      btn.className = 'upgrade-btn button-animated';
       btn.disabled = bananas < upgradeCosts[i];
       let label = '';
       if (i === 0) label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`;
@@ -161,19 +192,17 @@ function updateUpgradesUI() {
 
       btn.textContent = label;
       btn.addEventListener('click', () => {
-        if (bananas >= upgradeCosts[i]) {
-          bananas -= upgradeCosts[i];
-          upgradeEffects[i]();
-          upgradeCosts[i] = Math.floor(upgradeCosts[i] * 1.5);
-          saveAndUpdate();
-        }
+        bananas -= upgradeCosts[i];
+        upgradeEffects[i]();
+        upgradeCosts[i] = Math.floor(upgradeCosts[i] * 1.5);
+        saveAndUpdate();
       });
       upgradesList.appendChild(btn);
     }
   } else {
     for (let i = 0; i < pumpkinUpgradeCosts.length; i++) {
       const btn = document.createElement('button');
-      btn.className = 'upgrade-btn';
+      btn.className = 'upgrade-btn button-animated';
       btn.disabled = pumpkins < pumpkinUpgradeCosts[i];
       let label = '';
       if (i === 0) label = `🎃 +1/click — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`;
@@ -182,12 +211,10 @@ function updateUpgradesUI() {
 
       btn.textContent = label;
       btn.addEventListener('click', () => {
-        if (pumpkins >= pumpkinUpgradeCosts[i]) {
-          pumpkins -= pumpkinUpgradeCosts[i];
-          pumpkinUpgradeEffects[i]();
-          pumpkinUpgradeCosts[i] = Math.floor(pumpkinUpgradeCosts[i] * 1.7);
-          saveAndUpdate();
-        }
+        pumpkins -= pumpkinUpgradeCosts[i];
+        pumpkinUpgradeEffects[i]();
+        pumpkinUpgradeCosts[i] = Math.floor(pumpkinUpgradeCosts[i] * 1.7);
+        saveAndUpdate();
       });
       upgradesList.appendChild(btn);
     }
@@ -199,13 +226,26 @@ function saveAndUpdate() {
   updateUI();
 }
 
-// --- Game Event Listeners ---
+// ----- Game Event Listeners -----
 
-clickBananaBtn.addEventListener('click', () => {
+clickBananaBtn.addEventListener('click', (event) => {
+  // Button shrink handled by CSS :active
+  // Burst and rain animation
+  const { left, top, width, height } = clickBananaBtn.getBoundingClientRect();
+  const burstX = left + width / 2;
+  const burstY = top + window.scrollY + height / 2;
+  
   if (halloweenMode) {
+    flyBurst('🦇', burstX - 24, burstY);
+    flyBurst('🦇', burstX + 18, burstY - 20);
+    flyBurst('🦇', burstX + 32, burstY + 6);
+    rainPumpkins();
     const multiplier = halloweenMultiplierActive ? 1.5 : 1;
     pumpkins += pumpkinsPerClick * multiplier;
   } else {
+    flyBurst('🍌', burstX - 16, burstY - 12);
+    flyBurst('🍌', burstX + 21, burstY + 7);
+    flyBurst('🍌', burstX + 10, burstY + 23);
     bananas += bananasPerClick * rebirthMultiplier;
   }
   saveAndUpdate();
@@ -321,11 +361,11 @@ addBananasBtn.addEventListener('click', () => {
   bananaAddInput.value = "";
 });
 
-// --- Initialization ---
-
+// ----- Initialization -----
 window.onload = () => {
   loadData();
   updateUI();
+  buttonAnimationSetup();
   const loadingScreen = document.getElementById('loadingScreen');
   if (loadingScreen) loadingScreen.style.display = 'none';
 };
