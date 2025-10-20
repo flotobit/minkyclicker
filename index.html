@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>MinkyClicker Enhanced</title>
 <style>
-  /* Your existing inline CSS for index.html header and layout */
   body {
     font-family: Arial, sans-serif;
     margin:0;
@@ -58,13 +57,196 @@
   .left-sidebar button:hover, .click-btn:hover, .upgrade-btn:hover, #adminToggleBtn:hover {
     background:#265dcc;
   }
-
-  /* Additional small style to hide Halloween codes button initially */
-  #halloweenCodesBtn {
+  .right-panel {
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .click-power {
+    font-weight: bold;
+  }
+  .upgrade-btn {
+    justify-content: space-between;
+    user-select:none;
+  }
+  .upgrade-btn:disabled {
+    cursor:not-allowed;
+    opacity:0.5;
+  }
+  /* Loading screen styles */
+  #loadingScreen {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background:#222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    z-index: 100000;
+  }
+  /* Username modal */
+  #usernameModal {
+    display:none;
+    position: fixed;
+    z-index: 10000;
+    left:0;top:0;width:100%;height:100%;
+    background: rgba(0,0,0,0.4);
+    overflow:auto;
+  }
+  #usernameModalContent {
+    background:#fefefe;
+    margin:15% auto;
+    padding:20px;
+    width:320px;
+    border-radius:10px;
+    border:1px solid #888;
+    text-align:center;
+  }
+  #usernameInput {
+    width: 90%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+  }
+  #usernameSubmit {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1rem;
+    background: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  #usernameSubmit:hover { background: #45a049; }
+  #usernameDisplay {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: #222;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 11000;
+  }
+  #tradeButton {
+    background: #2196F3;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  #tradeButton:hover { background: #0b7dda; }
+  #adminPanel {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    width: 280px;
+    background: #333;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+    z-index: 11000;
     display: none;
   }
+  #adminPanel h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  #bananaAddInput {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: none;
+    font-size: 1rem;
+    color: #222;
+  }
+  #addBananasBtn {
+    width: 100%;
+    padding: 10px 0;
+    background: #27ae60;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #addBananasBtn:hover {
+    background: #1e8449;
+  }
+  #adminToggleBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 12000;
+    background: #d35400;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #adminToggleBtn:hover {
+    background: #b03a00;
+  }
 
-  /* The rest of your existing styles from the original index.html */
+  /* Settings Modal */
+  #settingsModal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 15000;
+  }
+  #settingsModal > div {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 320px;
+    text-align: center;
+  }
+  #settingsModal label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    gap: 10px;
+    font-size: 1.1rem;
+    margin-top: 12px;
+  }
+  #settingsModal input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+  #settingsModal button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #cancelSettingsBtn {
+    margin-left: 10px;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
@@ -82,7 +264,6 @@
     <button id="rebirthBtn">Rebirth (x1.5)</button>
     <button id="restoreBtn">Restore</button>
     <button id="codesBtn">Codes</button>
-    <button id="halloweenCodesBtn" class="button-animated">Codes (Halloween)</button>
     <button id="btnHalloween">🦇🎃 Halloween Mode OFF</button>
     <button id="btnSettings">Settings</button>
   </div>
@@ -136,7 +317,5 @@
 <audio id="halloweenMusic" loop src="FreeSounds-CreepyDrone2.mp3" preload="auto"></audio>
 
 <script src="script.js"></script>
-
 </body>
 </html>
-
