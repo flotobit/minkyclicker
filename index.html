@@ -1,322 +1,260 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MinkyClicker Enhanced</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin:0;
-    background:#fafafa;
-    color:#333;
-  }
-  .header {
-    background:#444;
-    color:white;
-    padding:10px 20px;
-    display:flex;
-    gap: 20px;
-    align-items:center;
-  }
-  .banana-count {
-    font-weight:bold;
-    font-size:1.2rem;
-  }
-  .per-second {
-    font-size:1rem;
-  }
-  .game-container {
-    display:flex;
-    gap:20px;
-    padding:10px 20px;
-  }
-  .left-sidebar, .right-panel {
-    background:white;
-    padding:15px;
-    border-radius:10px;
-  }
-  .left-sidebar {
-    width: 140px;
-    display:flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 0.9rem;
-    user-select:none;
-  }
-  .left-sidebar button, .click-btn, .upgrade-btn, #adminToggleBtn {
-    background:#3a86ff;
-    color:white;
-    border:none;
-    border-radius:6px;
-    padding:12px;
-    cursor:pointer;
-    font-weight:bold;
-    font-size: 1rem;
-  }
-  .left-sidebar button:hover, .click-btn:hover, .upgrade-btn:hover, #adminToggleBtn:hover {
-    background:#265dcc;
-  }
-  .right-panel {
-    flex:1;
-    display:flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 500px;
-    overflow-y: auto;
-  }
-  .click-power {
-    font-weight: bold;
-  }
-  .upgrade-btn {
-    justify-content: space-between;
-    user-select:none;
-  }
-  .upgrade-btn:disabled {
-    cursor:not-allowed;
-    opacity:0.5;
-  }
-  /* Loading screen styles */
-  #loadingScreen {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background:#222;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 2rem;
-    z-index: 100000;
-  }
-  /* Username modal */
-  #usernameModal {
-    display:none;
-    position: fixed;
-    z-index: 10000;
-    left:0;top:0;width:100%;height:100%;
-    background: rgba(0,0,0,0.4);
-    overflow:auto;
-  }
-  #usernameModalContent {
-    background:#fefefe;
-    margin:15% auto;
-    padding:20px;
-    width:320px;
-    border-radius:10px;
-    border:1px solid #888;
-    text-align:center;
-  }
-  #usernameInput {
-    width: 90%;
-    padding: 10px;
-    font-size: 1rem;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #aaa;
-  }
-  #usernameSubmit {
-    width: 100%;
-    padding: 10px 0;
-    font-size: 1rem;
-    background: #4CAF50;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-  #usernameSubmit:hover { background: #45a049; }
-  #usernameDisplay {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    background: #222;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    z-index: 11000;
-  }
-  #tradeButton {
-    background: #2196F3;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-  }
-  #tradeButton:hover { background: #0b7dda; }
-  #adminPanel {
-    position: fixed;
-    top: 50px;
-    right: 20px;
-    width: 280px;
-    background: #333;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 0 10px rgba(0,0,0,0.8);
-    z-index: 11000;
-    display: none;
-  }
-  #adminPanel h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    text-align: center;
-  }
-  #bananaAddInput {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: none;
-    font-size: 1rem;
-    color: #222;
-  }
-  #addBananasBtn {
-    width: 100%;
-    padding: 10px 0;
-    background: #27ae60;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  #addBananasBtn:hover {
-    background: #1e8449;
-  }
-  #adminToggleBtn {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 12000;
-    background: #d35400;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  #adminToggleBtn:hover {
-    background: #b03a00;
-  }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  min-height: 100vh;
+  overflow: hidden;
+}
 
-  /* Settings Modal */
-  #settingsModal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 15000;
+.banana-count {
+  position: fixed;
+  top: 24px;
+  left: 32px;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #fffde4;
+  text-shadow: 2px 2px 8px #2c3e50bb;
+  z-index: 1000;
+  letter-spacing: 1px;
+}
+
+.main-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.button-animated {
+  transition: transform .18s cubic-bezier(.4,1.5,.7,1.02), background .14s;
+}
+.button-animated:hover {
+  transform: scale(1.12);
+  background: #265dcc;
+}
+.button-animated:active {
+  transform: scale(0.92);
+}
+
+/* Additional style for Halloween Codes button */
+#halloweenCodesBtn {
+  margin-top: 8px;
+}
+
+/* Click power style */
+.click-power {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  background: #7f3fbf;
+  padding: 16px 0 7px 0;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px #0003;
+  letter-spacing: 2px;
+}
+
+#clickPower {
+  display: block;
+  font-size: 2.45rem;
+  color: #ffe066;
+  margin-top: 6px;
+}
+
+.upgrades-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 10px;
+  padding-right: 3px;
+}
+
+.upgrade-btn {
+  font-size: 1.2rem;
+  color: #fff;
+  background: linear-gradient(90deg, #7f3fbf 70%, #884BD5 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 18px 16px;
+  box-shadow: 0 2px 9px #0002;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.08s, transform 0.14s;
+  outline: none;
+  line-height: 1.4;
+}
+
+.upgrade-btn:active {
+  background: linear-gradient(90deg, #5572ee 60%, #6B8DF6 100%);
+  transform: scale(0.95);
+}
+
+.upgrade-btn[disabled] {
+  background: #44456a !important;
+  color: #bbbbcc;
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #ddd0;
+}
+::-webkit-scrollbar-thumb {
+  background: #5e2c9555;
+  border-radius: 8px;
+}
+
+/* Loading screen styles */
+#loadingScreen {
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:#222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2rem;
+  z-index: 100000;
+}
+
+/* Settings Modal style */
+#settingsModal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 15000;
+}
+#settingsModal > div {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 320px;
+  text-align: center;
+}
+#settingsModal label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 10px;
+  font-size: 1.1rem;
+  margin-top: 12px;
+}
+#settingsModal input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+#settingsModal button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#cancelSettingsBtn {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+/* Pumpkin rain animation */
+.pumpkin-rain {
+  position: fixed;
+  top: -48px;
+  font-size: 2.1rem;
+  z-index: 900;
+  pointer-events: none;
+  animation: pumpkinDrop 1.2s cubic-bezier(.21,1.2,.77,.99) forwards;
+}
+@keyframes pumpkinDrop {
+  from { opacity: 0.7; }
+  15% { opacity: 1; }
+  to {
+    top: 100vh;
+    opacity: 0;
+    transform: rotate(360deg) scale(1.12);
   }
-  #settingsModal > div {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    width: 320px;
-    text-align: center;
+}
+
+/* Burst animation */
+.burst-effect {
+  position: absolute;
+  font-size: 2.2rem;
+  pointer-events: none;
+  z-index: 910;
+  animation: burstFly 0.85s cubic-bezier(.21,1.2,.77,.99) forwards;
+}
+@keyframes burstFly {
+  from { opacity: 1; transform: scale(0.88) translateY(0); }
+  60% { opacity: 1; }
+  to {
+    opacity: 0;
+    transform: scale(1.14) translateY(-75px);
   }
-  #settingsModal label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    gap: 10px;
-    font-size: 1.1rem;
-    margin-top: 12px;
-  }
-  #settingsModal input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-  }
-  #settingsModal button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  #cancelSettingsBtn {
-    margin-left: 10px;
-    margin-top: 10px;
-  }
-</style>
-</head>
-<body>
+}
 
-<!-- Loading screen -->
-<div id="loadingScreen">Loading...</div>
-
-<div class="header">
-  <div id="bananaCount" class="banana-count">Bananas: 0</div>
-  <div class="per-second">0 Bananas per Second</div>
-</div>
-
-<div class="game-container">
-  <div class="left-sidebar">
-    <button id="rebirthBtn">Rebirth (x1.5)</button>
-    <button id="restoreBtn">Restore</button>
-    <button id="codesBtn">Codes</button>
-    <button id="btnHalloween">🦇🎃 Halloween Mode OFF</button>
-    <button id="btnSettings">Settings</button>
-  </div>
-
-  <div class="right-panel">
-    <button class="click-btn" id="clickBananaBtn">Click for Banana 🍌</button>
-    <div class="click-power">CLICK POWER<br><span id="clickPower">+1</span></div>
-    <div class="upgrades-list" id="upgradesList"></div>
-  </div>
-</div>
-
-<!-- Username Modal -->
-<div id="usernameModal">
-  <div id="usernameModalContent">
-    <h2>Enter Your Username</h2>
-    <input type="text" id="usernameInput" placeholder="Username" autocomplete="off" />
-    <button id="usernameSubmit">Submit</button>
-  </div>
-</div>
-
-<!-- Username display + trade -->
-<div id="usernameDisplay">
-  <span id="usernameText"></span>
-  <button id="tradeButton">Trade</button>
-</div>
-
-<!-- Admin Panel Toggle Button -->
-<button id="adminToggleBtn">Admin Panel</button>
-
-<!-- Admin Panel -->
-<div id="adminPanel">
-  <h3>Admin Panel</h3>
-  <input type="number" id="bananaAddInput" placeholder="Add bananas..." min="1" />
-  <button id="addBananasBtn">Add Bananas</button>
-</div>
-
-<!-- Settings Modal -->
-<div id="settingsModal">
-  <div>
-    <h2>Settings</h2>
-    <label>
-      <input type="checkbox" id="halloweenMultiplierToggle" />
-      Use 1.5x currency multiplier in Halloween Mode
-    </label>
-    <button id="saveSettingsBtn">Save</button>
-    <button id="cancelSettingsBtn">Cancel</button>
-  </div>
-</div>
-
-<!-- Halloween Music -->
-<audio id="halloweenMusic" loop src="FreeSounds-CreepyDrone2.mp3" preload="auto"></audio>
-
-<script src="script.js"></script>
-</body>
-</html>
-
+/* Admin Panel styles */
+#adminPanel {
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  width: 280px;
+  background: #333;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 10px rgba(0,0,0,0.8);
+  z-index: 11000;
+  display: none;
+}
+#adminPanel h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+#bananaAddInput {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  color: #222;
+}
+#addBananasBtn {
+  width: 100%;
+  padding: 10px 0;
+  background: #27ae60;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+#addBananasBtn:hover {
+  background: #1e8449;
+}
+#adminToggleBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 12000;
+  background: #d35400;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#adminToggleBtn:hover {
+  background: #b03a00;
+}
