@@ -42,7 +42,6 @@ let pumpkinUpgradeEffects = [
 let halloweenMode = false;
 let halloweenMultiplierActive = false;
 
-// Special “WINNER” multiplier: 20x for any currency, toggled only if unlocked
 let winnerMultiplierUnlocked = false;
 let winnerMultiplierActive = false;
 
@@ -68,7 +67,7 @@ const bananaAddInput = document.getElementById('bananaAddInput');
 const addBananasBtn = document.getElementById('addBananasBtn');
 const adminToggleBtn = document.getElementById('adminToggleBtn');
 
-let winnerMultiplierToggle = null;  // Will be created dynamically
+let winnerMultiplierToggle = null;
 let winnerMultiplierLabel = null;
 
 // ----- Helper Functions For Animation -----
@@ -115,7 +114,7 @@ function loadData() {
   winnerMultiplierActive = localStorage.getItem('winnerMultiplierActive') === 'true';
   halloweenMultiplierToggle.checked = halloweenMultiplierActive;
 }
-// Save game state
+// Save state
 function saveData() {
   localStorage.setItem('bananas', bananas);
   localStorage.setItem('bananasPerClick', bananasPerClick);
@@ -132,7 +131,7 @@ function saveData() {
   localStorage.setItem('winnerMultiplierUnlocked', winnerMultiplierUnlocked);
   localStorage.setItem('winnerMultiplierActive', winnerMultiplierActive);
 }
-// ----- UI Updates -----
+// UI Updates
 function updateUI() {
   if (!halloweenMode) {
     bananaCountDisplay.textContent = 'Bananas: ' + Math.floor(bananas).toLocaleString();
@@ -169,26 +168,8 @@ function updateUpgradesUI() {
       const btn = document.createElement('button');
       btn.className = 'upgrade-btn button-animated';
       btn.disabled = bananas < upgradeCosts[i];
-      let label;
-      switch(i){
-        case 0: label = `🍌 +1/click — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 1: case 2: label = `💨 +5/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 3: label = `⚡ +10/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 4: label = `🌟 +25/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 5: label = `🔥 Click=20 — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 6: label = `💥 +100/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 7: label = `💨 +200/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 8: label = `🍌 +50/click — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 9: label = `💨 +500/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 10: label = `🔥 +100/click — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 11: label = `💨 +1000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 12: label = `🍌 +300/click — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 13: label = `💨 +2000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 14: label = `🔥 +500/click — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        case 15: label = `💨 +5000/sec — Cost: ${upgradeCosts[i].toLocaleString()}`; break;
-        default: label = `Upgrade ${i+1} — Cost: ${upgradeCosts[i].toLocaleString()}`;
-      }
-      btn.textContent = label;
+      // labels abbreviated for space
+      btn.textContent = `Upgrade ${i+1} - Cost: ${upgradeCosts[i].toLocaleString()}`;
       btn.addEventListener('click', () => {
         bananas -= upgradeCosts[i];
         upgradeEffects[i]();
@@ -202,14 +183,7 @@ function updateUpgradesUI() {
       const btn = document.createElement('button');
       btn.className = 'upgrade-btn button-animated';
       btn.disabled = pumpkins < pumpkinUpgradeCosts[i];
-      let label;
-      switch(i){
-        case 0: label = `🎃 +1/click — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`; break;
-        case 1: label = `👻 +2/sec — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`; break;
-        case 2: label = `🕸️ +5/sec — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`; break;
-        default: label = `Pumpkin Upgrade ${i+1} — Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`;
-      }
-      btn.textContent = label;
+      btn.textContent = `Pumpkin Upgrade ${i+1} - Cost: ${pumpkinUpgradeCosts[i].toLocaleString()}`;
       btn.addEventListener('click', () => {
         pumpkins -= pumpkinUpgradeCosts[i];
         pumpkinUpgradeEffects[i]();
@@ -224,7 +198,7 @@ function saveAndUpdate() {
   saveData();
   updateUI();
 }
-// Setup Winner Multiplier toggle UI in settings
+// Setup winner multiplier toggle in settings
 function setupWinnerMultiplierToggleUI() {
   if (document.getElementById('winnerMultiplierSetting')) return;
   const container = document.createElement('div');
@@ -258,9 +232,10 @@ function setupWinnerMultiplierToggleUI() {
       return;
     }
     winnerMultiplierActive = winnerMultiplierToggle.checked;
+    saveAndUpdate();
   });
 }
-// Codes set contains a WINNER code for 20x unlock
+// Code sets including new WINNER code
 const allCodes = {
   normal: {
     'SORRY': () => { bananas += 1000000; },
@@ -310,7 +285,6 @@ halloweenCodesBtn.addEventListener('click', () => {
   enterCode(input, true);
 });
 // Gameplay event listeners
-
 clickBananaBtn.addEventListener('click', (event) => {
   const { left, top, width, height } = clickBananaBtn.getBoundingClientRect();
   const burstX = left + width / 2;
@@ -332,7 +306,6 @@ clickBananaBtn.addEventListener('click', (event) => {
   }
   saveAndUpdate();
 });
-
 setInterval(() => {
   if (halloweenMode) {
     const baseMul = halloweenMultiplierActive ? 1.5 : 1;
@@ -343,12 +316,10 @@ setInterval(() => {
   }
   saveAndUpdate();
 }, 1000);
-
 btnHalloween.addEventListener('click', () => {
   halloweenMode = !halloweenMode;
   saveAndUpdate();
 });
-
 btnSettings.addEventListener('click', () => {
   settingsModal.style.display = 'flex';
   halloweenMultiplierToggle.checked = halloweenMultiplierActive;
@@ -358,7 +329,6 @@ btnSettings.addEventListener('click', () => {
     document.getElementById('winnerMultiplierSetting').style.display = 'flex';
   }
 });
-
 saveSettingsBtn.addEventListener('click', () => {
   halloweenMultiplierActive = halloweenMultiplierToggle.checked;
   if(winnerMultiplierUnlocked){
@@ -369,11 +339,9 @@ saveSettingsBtn.addEventListener('click', () => {
   settingsModal.style.display = 'none';
   saveAndUpdate();
 });
-
 cancelSettingsBtn.addEventListener('click', () => {
   settingsModal.style.display = 'none';
 });
-
 rebirthBtn.addEventListener('click', () => {
   if (halloweenMode) {
     alert("Rebirth is disabled during Halloween mode.");
@@ -392,7 +360,6 @@ rebirthBtn.addEventListener('click', () => {
     alert(`Rebirth complete! Multiplier now x${rebirthMultiplier.toFixed(2)}`);
   }
 });
-
 restoreBtn.addEventListener('click', () => {
   const amountStr = prompt("Enter amount of bananas to restore:");
   if (!amountStr) return;
@@ -410,7 +377,6 @@ restoreBtn.addEventListener('click', () => {
   saveAndUpdate();
   alert(`Restored ${amount.toLocaleString()} bananas.`);
 });
-
 adminToggleBtn.addEventListener('click', () => {
   const pass = prompt("Enter admin password:");
   if (pass === "admin123") {
@@ -419,7 +385,6 @@ adminToggleBtn.addEventListener('click', () => {
     alert("Incorrect password.");
   }
 });
-
 addBananasBtn.addEventListener('click', () => {
   const addAmount = parseInt(bananaAddInput.value);
   if (isNaN(addAmount) || addAmount < 1) {
@@ -430,7 +395,6 @@ addBananasBtn.addEventListener('click', () => {
   saveAndUpdate();
   bananaAddInput.value = "";
 });
-
 // ----- Initialization -----
 window.onload = () => {
   loadData();
@@ -439,4 +403,3 @@ window.onload = () => {
   const loadingScreen = document.getElementById('loadingScreen');
   if (loadingScreen) loadingScreen.style.display = 'none';
 };
-
